@@ -8,6 +8,8 @@ namespace Namotion.Storage.Abstractions
     {
         Task<Stream> OpenWriteAsync(string path, CancellationToken cancellationToken = default);
 
+        //Task<Stream> OpenAppendAsync(string path, CancellationToken cancellationToken = default);
+
         Task DeleteAsync(string path, CancellationToken cancellationToken = default);
     }
 }

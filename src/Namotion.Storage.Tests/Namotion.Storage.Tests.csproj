@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Namotion.Storage.Abstractions\Namotion.Storage.Abstractions.csproj" />
     <ProjectReference Include="..\Namotion.Storage.Azure.Storage.Blob\Namotion.Storage.Azure.Storage.Blob.csproj" />
+    <ProjectReference Include="..\Namotion.Storage.Ftp\Namotion.Storage.Ftp.csproj" />
     <ProjectReference Include="..\Namotion.Storage.Json\Namotion.Storage.Json.csproj" />
     <ProjectReference Include="..\Namotion.Storage\Namotion.Storage.csproj" />
   </ItemGroup>
