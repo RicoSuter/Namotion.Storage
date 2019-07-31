@@ -13,6 +13,8 @@ namespace Namotion.Storage.Ftp
     {
         private readonly FtpClient _client;
 
+        private bool _loadPropertiesWithListing = false;
+
         private FtpBlobStorage(string host, int port, string username, string password)
         {
             _client = port != 0 ? new FtpClient(host) : new FtpClient(host, port, null, null);
@@ -77,7 +79,7 @@ namespace Namotion.Storage.Ftp
         {
             await _client.AutoConnectAsync(cancellationToken).ConfigureAwait(false);
 
-            if (_client.Capabilities.Contains(FtpCapability.MLSD))
+            if (_client.Capabilities.Contains(FtpCapability.MLSD) && !_loadPropertiesWithListing)
             {
                 try
                 {
@@ -86,6 +88,7 @@ namespace Namotion.Storage.Ftp
                 }
                 catch (PlatformNotSupportedException)
                 {
+                    _loadPropertiesWithListing = true;
                     return await GetPropertiesWithListingAsync(path).ConfigureAwait(false);
                 }
             }
