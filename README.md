@@ -27,12 +27,14 @@ TODO
 
 **Blobs**
 
-- **BlobProperties
-\<T>**
+- **BlobProperties\<T>**
 - **IBlobStorage**: A blob storage where blobs are stored in a container and cannot be directly stored. Only 'containerName/blobName' or 'containerName/subDirectories/blobName' are allowed.
 - **IBlobContainer\<T>**
-- **IBlobContainer**: A blob container where blobs can be directly stored or in a subdirectory.
+- **IBlobContainer**: A blob container where blobs can be directly stored or in a subdirectory. A container acts like a simple/basic virtual file system.
 - **BlobElement**: Metadata and properties of a blob or container.
+
+Internal: 
+
 - **IBlobReader**: Internal (do not use directly.)
 - **IBlobWriter**: Internal (do not use directly.)
 
@@ -52,10 +54,19 @@ TODO
 
 [![Nuget](https://img.shields.io/nuget/v/Namotion.Storage.svg)](https://www.nuget.org/packages/Namotion.Storage/)
 
-TODO
+Implementations:
+
+- FileSystemBlobStorage
+- InMemoryBlobStorage
 
 ### Namotion.Storage.Azure.Storage.Blob
 
 [![Nuget](https://img.shields.io/nuget/v/Namotion.Storage.Azure.Storage.Blob.svg)](https://www.nuget.org/packages/Namotion.Storage.Azure.Storage.Blob/)
+
+TODO
+
+### Namotion.Storage.Ftp
+
+[![Nuget](https://img.shields.io/nuget/v/Namotion.Storage.Ftp.svg)](https://www.nuget.org/packages/Namotion.Storage.Ftp.Blob/)
 
 TODO
