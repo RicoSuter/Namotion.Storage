@@ -23,8 +23,10 @@ namespace Namotion.Storage.Tests
                     // Act
                     var existsBeforeWrite = await container.ExistsAsync(path);
                     await container.WriteAsStringAsync(path, content);
-                    var result = await container.ReadAsStringAsync(path);
                     var existsAfterWrite = await container.ExistsAsync(path);
+
+                    var result = await container.ReadAsStringAsync(path);
+
                     await container.DeleteAsync(path);
                     var existsAfterDelete = await container.ExistsAsync(path);
 
