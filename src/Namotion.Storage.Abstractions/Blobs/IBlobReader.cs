@@ -8,10 +8,10 @@ namespace Namotion.Storage.Abstractions
     {
         Task<bool> ExistsAsync(string path, CancellationToken cancellationToken = default);
 
-        Task<BlobProperties> GetPropertiesAsync(string path, CancellationToken cancellationToken = default);
+        Task<BlobElement> GetElementAsync(string path, CancellationToken cancellationToken = default);
 
         Task<Stream> OpenReadAsync(string path, CancellationToken cancellationToken = default);
 
-        Task<BlobItem[]> ListAsync(string path, CancellationToken cancellationToken = default);
+        Task<BlobElement[]> ListAsync(string path, CancellationToken cancellationToken = default);
     }
 }

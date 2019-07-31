@@ -75,19 +75,19 @@ namespace Namotion.Storage.Ftp
             return await _client.FileExistsAsync(path, cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<BlobItem[]> ListAsync(string path, CancellationToken cancellationToken = default)
+        public async Task<BlobElement[]> ListAsync(string path, CancellationToken cancellationToken = default)
         {
             await _client.AutoConnectAsync(cancellationToken).ConfigureAwait(false);
 
             var items = await _client.GetListingAsync(path).ConfigureAwait(false);
             return items
                 .Select(i => i.Type == FtpFileSystemObjectType.Directory ?
-                    BlobItem.CreateContainer(i.FullName, i.Name) :
-                    BlobItem.CreateBlob(i.FullName, i.Name))
+                    BlobElement.CreateContainer(i.FullName, i.Name) :
+                    new BlobElement(i.FullName, i.Name, BlobElementType.Blob, i.Size, i.Created.ToUniversalTime(), i.Modified.ToUniversalTime()))
                 .ToArray();
         }
 
-        public async Task<BlobProperties> GetPropertiesAsync(string path, CancellationToken cancellationToken = default)
+        public async Task<BlobElement> GetElementAsync(string path, CancellationToken cancellationToken = default)
         {
             await _client.AutoConnectAsync(cancellationToken).ConfigureAwait(false);
 
@@ -96,7 +96,8 @@ namespace Namotion.Storage.Ftp
                 try
                 {
                     var info = await _client.GetObjectInfoAsync(path, true).ConfigureAwait(false);
-                    return new BlobProperties(info.Size, info.Created.ToUniversalTime(), info.Modified.ToUniversalTime());
+                    return new BlobElement(path, null, BlobElementType.Blob,
+                        info.Size, info.Created.ToUniversalTime(), info.Modified.ToUniversalTime());
                 }
                 catch (PlatformNotSupportedException)
                 {
@@ -110,7 +111,7 @@ namespace Namotion.Storage.Ftp
             }
         }
 
-        private async Task<BlobProperties> GetPropertiesWithListingAsync(string path)
+        private async Task<BlobElement> GetPropertiesWithListingAsync(string path)
         {
             var name = Path.GetFileName(path);
             var directory = Path.GetDirectoryName(path);
@@ -118,7 +119,8 @@ namespace Namotion.Storage.Ftp
             var items = await _client.GetListingAsync(directory).ConfigureAwait(false);
             var item = items.Single(i => i.Name == name);
 
-            return new BlobProperties(item.Size, item.Created.ToUniversalTime(), item.Modified.ToUniversalTime());
+            return new BlobElement(path, null, BlobElementType.Blob,
+                item.Size, item.Created.ToUniversalTime(), item.Modified.ToUniversalTime());
         }
 
         public void Dispose()

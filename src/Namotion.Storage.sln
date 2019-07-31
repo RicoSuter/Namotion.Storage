@@ -15,7 +15,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Namotion.Storage.Demo", "Na
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Namotion.Storage.Tests", "Namotion.Storage.Tests\Namotion.Storage.Tests.csproj", "{272699CC-7E44-4405-93FB-77AAAAD485B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Namotion.Storage.Ftp", "Namotion.Storage.Ftp\Namotion.Storage.Ftp.csproj", "{FBAEB6C3-8B2F-46F9-913B-259C0562D02E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Namotion.Storage.Ftp", "Namotion.Storage.Ftp\Namotion.Storage.Ftp.csproj", "{FBAEB6C3-8B2F-46F9-913B-259C0562D02E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FA82EED3-9A49-4B97-956E-FD1BF8385D7C}"
+	ProjectSection(SolutionItems) = preProject
+		..\README.md = ..\README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -25,7 +25,16 @@ TODO
 
 [![Nuget](https://img.shields.io/nuget/v/Namotion.Storage.Abstractions.svg)](https://www.nuget.org/packages/Namotion.Storage.Abstractions/)
 
-TODO
+**Blobs**
+
+- **BlobProperties
+\<T>**
+- **IBlobStorage**: A blob storage where blobs are stored in a container and cannot be directly stored. Only 'containerName/blobName' or 'containerName/subDirectories/blobName' are allowed.
+- **IBlobContainer\<T>**
+- **IBlobContainer**: A blob container where blobs can be directly stored or in a subdirectory.
+- **IBlobReader**: Internal (do not use directly.)
+- **IBlobWriter**: Internal (do not use directly.)
+- **BlobElement**: Metadata and properties of a blob or container.
 
 ### Namotion.Storage.Json
 

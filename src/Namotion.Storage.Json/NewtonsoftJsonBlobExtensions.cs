@@ -16,6 +16,26 @@ namespace Namotion.Storage
 
         private static readonly JsonSerializer _serializer = JsonSerializer.Create(_serializerSettings);
 
+        public static Task WriteAsJsonAsync<T>(this IBlobContainer<T> writer, string path, T value, CancellationToken cancellationToken = default)
+        {
+            return ((IBlobWriter)writer).WriteAsJsonAsync(path, value, _serializer, cancellationToken);
+        }
+
+        public static Task WriteAsJsonAsync<T>(this IBlobContainer<T> writer, string path, T value, JsonSerializer serializer, CancellationToken cancellationToken = default)
+        {
+            return ((IBlobWriter)writer).WriteAsJsonAsync(path, value, serializer, cancellationToken);
+        }
+
+        public static Task WriteAsJsonAsync<T>(this IBlobStorage<T> writer, string path, T value, CancellationToken cancellationToken = default)
+        {
+            return ((IBlobWriter)writer).WriteAsJsonAsync(path, value, _serializer, cancellationToken);
+        }
+
+        public static Task WriteAsJsonAsync<T>(this IBlobStorage<T> writer, string path, T value, JsonSerializer serializer, CancellationToken cancellationToken = default)
+        {
+            return ((IBlobWriter)writer).WriteAsJsonAsync(path, value, serializer, cancellationToken);
+        }
+
         public static Task WriteAsJsonAsync<T>(this IBlobWriter writer, string path, T value, CancellationToken cancellationToken = default)
         {
             return writer.WriteAsJsonAsync(path, value, _serializer, cancellationToken);
@@ -27,6 +47,26 @@ namespace Namotion.Storage
             {
                 serializer.Serialize(jsonWriter, value);
             }
+        }
+
+        public static Task<T> ReadAsJsonAsync<T>(this IBlobContainer<T> reader, string path, CancellationToken cancellationToken = default)
+        {
+            return ((IBlobReader)reader).ReadAsJsonAsync<T>(path, _serializer, cancellationToken);
+        }
+
+        public static Task<T> ReadAsJsonAsync<T>(this IBlobContainer<T> reader, string path, JsonSerializer serializer, CancellationToken cancellationToken = default)
+        {
+            return ((IBlobReader)reader).ReadAsJsonAsync<T>(path, serializer, cancellationToken);
+        }
+
+        public static Task<T> ReadAsJsonAsync<T>(this IBlobStorage<T> reader, string path, CancellationToken cancellationToken = default)
+        {
+            return ((IBlobReader)reader).ReadAsJsonAsync<T>(path, _serializer, cancellationToken);
+        }
+
+        public static Task<T> ReadAsJsonAsync<T>(this IBlobStorage<T> reader, string path, JsonSerializer serializer, CancellationToken cancellationToken = default)
+        {
+            return ((IBlobReader)reader).ReadAsJsonAsync<T>(path, serializer, cancellationToken);
         }
 
         public static Task<T> ReadAsJsonAsync<T>(this IBlobReader reader, string path, CancellationToken cancellationToken = default)

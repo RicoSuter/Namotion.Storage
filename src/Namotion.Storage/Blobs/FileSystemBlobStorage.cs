@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Namotion.Storage
 {
+    /// <summary>
+    /// A local file system based blob storage.
+    /// </summary>
     public class FileSystemBlobStorage : IBlobStorage, IBlobContainer
     {
         private readonly string _basePath;
@@ -15,6 +18,11 @@ namespace Namotion.Storage
             _basePath = basePath;
         }
 
+        /// <summary>
+        /// Creates a new storage with an abosulte base path.
+        /// </summary>
+        /// <param name="basePath">The absolute base path.</param>
+        /// <returns>The blob storage or container.</returns>
         public static FileSystemBlobStorage CreateWithBasePath(string basePath)
         {
             return new FileSystemBlobStorage(basePath);
@@ -26,10 +34,11 @@ namespace Namotion.Storage
             return Task.FromResult(File.Exists(fullPath));
         }
 
-        public Task<BlobProperties> GetPropertiesAsync(string path, CancellationToken cancellationToken)
+        public Task<BlobElement> GetElementAsync(string path, CancellationToken cancellationToken)
         {
             var fullPath = GetFullPath(path);
-            return Task.FromResult(new BlobProperties(
+            return Task.FromResult(new BlobElement(
+                path, null, BlobElementType.Blob,
                 new FileInfo(fullPath).Length,
                 File.GetCreationTimeUtc(fullPath),
                 File.GetLastWriteTimeUtc(fullPath)));
@@ -60,15 +69,15 @@ namespace Namotion.Storage
             return Task.CompletedTask;
         }
 
-        public Task<BlobItem[]> ListAsync(string path, CancellationToken cancellationToken = default)
+        public Task<BlobElement[]> ListAsync(string path, CancellationToken cancellationToken = default)
         {
             var fullPath = GetFullPath(path);
 
             var directories = Directory.GetDirectories(fullPath)
-                .Select(d => BlobItem.CreateContainer(d, Path.GetFileName(d)));
+                .Select(d => BlobElement.CreateContainer(d, Path.GetFileName(d)));
 
             var files = Directory.GetFiles(fullPath)
-                .Select(d => BlobItem.CreateBlob(d, Path.GetFileName(d)));
+                .Select(d => BlobElement.CreateBlob(d, Path.GetFileName(d)));
 
             return Task.FromResult(directories.Concat(files).ToArray());
         }

@@ -24,11 +24,12 @@ namespace Namotion.Storage.Azure.Storage.Blob
             return new AzureBlobStorage(CloudStorageAccount.Parse(connectionString));
         }
 
-        public async Task<Abstractions.BlobProperties> GetPropertiesAsync(string path, CancellationToken cancellationToken)
+        public async Task<BlobElement> GetElementAsync(string path, CancellationToken cancellationToken)
         {
             var blob = await GetBlobReferenceAsync(path, cancellationToken).ConfigureAwait(false);
             await blob.FetchAttributesAsync().ConfigureAwait(false);
-            return new Abstractions.BlobProperties(
+            return new BlobElement(
+                path, null, BlobElementType.Blob,
                 blob.Properties.Length,
                 blob.Properties.Created,
                 blob.Properties.LastModified,
@@ -75,7 +76,7 @@ namespace Namotion.Storage.Azure.Storage.Blob
             }
         }
 
-        public async Task<BlobItem[]> ListAsync(string path, CancellationToken cancellationToken = default)
+        public async Task<BlobElement[]> ListAsync(string path, CancellationToken cancellationToken = default)
         {
             var pathSegments = PathUtilities.GetSegments(path);
             if (pathSegments.Length == 0)
@@ -83,12 +84,12 @@ namespace Namotion.Storage.Azure.Storage.Blob
                 var cloudBlobClient = _storageAccount.CreateCloudBlobClient();
 
                 BlobContinuationToken continuationToken = null;
-                var results = new List<BlobItem>();
+                var results = new List<BlobElement>();
                 do
                 {
                     var response = await cloudBlobClient.ListContainersSegmentedAsync(continuationToken).ConfigureAwait(false);
                     continuationToken = response.ContinuationToken;
-                    results.AddRange(response.Results.Select(c => BlobItem.CreateContainer(c.Name)));
+                    results.AddRange(response.Results.Select(c => BlobElement.CreateContainer(c.Name)));
                 }
                 while (continuationToken != null);
 
@@ -101,7 +102,7 @@ namespace Namotion.Storage.Azure.Storage.Blob
                 var container = await GetCloudBlobContainerAsync(containerName, cancellationToken).ConfigureAwait(false);
 
                 BlobContinuationToken continuationToken = null;
-                var results = new List<BlobItem>();
+                var results = new List<BlobElement>();
                 do
                 {
                     var response = pathSegments.Skip(1).Any() ?
@@ -111,14 +112,20 @@ namespace Namotion.Storage.Azure.Storage.Blob
                     continuationToken = response.ContinuationToken;
                     results.AddRange(response.Results.Select(i =>
                     {
-                        if (i is CloudBlob blob)
+                        if (i is CloudBlobDirectory directory)
+                        {
+                            return BlobElement.CreateContainer(directory.Prefix, PathUtilities.GetSegments(directory.Prefix).Last());
+                        }
+                        else if (i is CloudBlob blob)
                         {
                             var blobNameSegments = blob.Name.Split(PathUtilities.DelimiterChar);
-                            return BlobItem.CreateBlob(blob.Name, string.Join(PathUtilities.Delimiter, blobNameSegments.Skip(blobNameSegments.Length - 1)));
-                        }
-                        else if (i is CloudBlobDirectory directory)
-                        {
-                            return BlobItem.CreateContainer(directory.Prefix, PathUtilities.GetSegments(directory.Prefix).Last());
+                            return new BlobElement(
+                                blob.Name,
+                                string.Join(PathUtilities.Delimiter, blobNameSegments.Skip(blobNameSegments.Length - 1)),
+                                BlobElementType.Blob,
+                                blob.Properties.Length,
+                                blob.Properties.Created,
+                                blob.Properties.LastModified);
                         }
                         else
                         {

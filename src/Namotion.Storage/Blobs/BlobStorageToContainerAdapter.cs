@@ -16,9 +16,9 @@ namespace Namotion.Storage
             _containerName = containerName;
         }
 
-        public Task<BlobProperties> GetPropertiesAsync(string path, CancellationToken cancellationToken)
+        public Task<BlobElement> GetElementAsync(string path, CancellationToken cancellationToken)
         {
-            return _storage.GetPropertiesAsync(_containerName + "/" + path, cancellationToken);
+            return _storage.GetElementAsync(_containerName + "/" + path, cancellationToken);
         }
 
         public Task<bool> ExistsAsync(string path, CancellationToken cancellationToken = default)
@@ -41,7 +41,7 @@ namespace Namotion.Storage
             return _storage.DeleteAsync(_containerName + "/" + path, cancellationToken);
         }
 
-        public Task<BlobItem[]> ListAsync(string path, CancellationToken cancellationToken = default)
+        public Task<BlobElement[]> ListAsync(string path, CancellationToken cancellationToken = default)
         {
             return _storage.ListAsync(_containerName + "/" + path, cancellationToken);
         }

@@ -42,7 +42,7 @@ namespace Namotion.Storage.Tests
         }
 
         [Fact]
-        public virtual async Task<BlobProperties> WhenWritingBlob_ThenPropertiesAreAvailable()
+        public virtual async Task<BlobElement> WhenWritingBlob_ThenPropertiesAreAvailable()
         {
             // Arrange
             var config = GetConfiguration();
@@ -55,11 +55,11 @@ namespace Namotion.Storage.Tests
                     await container.WriteAsStringAsync(path, "Hello world!");
 
                     // Act
-                    var properties = await container.GetPropertiesAsync(path);
+                    var element = await container.GetElementAsync(path);
 
                     // Assert
-                    Assert.True(properties.Length > 0);
-                    return properties;
+                    Assert.True(element.Length > 0);
+                    return element;
                 }
                 finally
                 {
@@ -100,7 +100,8 @@ namespace Namotion.Storage.Tests
         {
             // Arrange
             var config = GetConfiguration();
-            using (var container = GetBlobContainer(CreateBlobStorage(config)))
+            using (var container = GetBlobContainer(CreateBlobStorage(config))
+                .WithBlobType<string>())
             {
                 var path = Guid.NewGuid().ToString();
                 var content = Guid.NewGuid().ToString();
@@ -144,10 +145,10 @@ namespace Namotion.Storage.Tests
                     var items3 = await container.ListAsync("foo/bar");
 
                     // Assert
-                    Assert.Contains(containers, i => i.Name == "mystorage" && i.IsContainer);
-                    Assert.Contains(items1, i => i.Name == "foo" && i.IsContainer);
-                    Assert.Contains(items2, i => i.Name == "bar" && i.IsContainer);
-                    Assert.Contains(items3, i => i.Name == blobName && i.IsBlob);
+                    Assert.Contains(containers, i => i.Name == "mystorage" && i.Type == BlobElementType.Container);
+                    Assert.Contains(items1, i => i.Name == "foo" && i.Type == BlobElementType.Container);
+                    Assert.Contains(items2, i => i.Name == "bar" && i.Type == BlobElementType.Container);
+                    Assert.Contains(items3, i => i.Name == blobName && i.Type == BlobElementType.Blob);
                 }
                 finally
                 {

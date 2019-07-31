@@ -17,9 +17,9 @@ namespace Namotion.Storage
             _blobs = blobs ?? new Dictionary<string, byte[]>();
         }
 
-        public Task<BlobProperties> GetPropertiesAsync(string path, CancellationToken cancellationToken)
+        public Task<BlobElement> GetElementAsync(string path, CancellationToken cancellationToken)
         {
-            return Task.FromResult(new BlobProperties(_blobs[path].LongLength));
+            return Task.FromResult(new BlobElement(path, null, BlobElementType.Blob, _blobs[path].LongLength));
         }
 
         public Task<bool> ExistsAsync(string path, CancellationToken cancellationToken = default)
@@ -64,7 +64,7 @@ namespace Namotion.Storage
             }
         }
 
-        public Task<BlobItem[]> ListAsync(string path, CancellationToken cancellationToken = default)
+        public Task<BlobElement[]> ListAsync(string path, CancellationToken cancellationToken = default)
         {
             var pathSegments = PathUtilities.GetSegments(path);
             return Task.FromResult(ListInternal(pathSegments)
@@ -73,7 +73,7 @@ namespace Namotion.Storage
                 .ToArray());
         }
 
-        private IEnumerable<BlobItem> ListInternal(string[] pathSegments)
+        private IEnumerable<BlobElement> ListInternal(string[] pathSegments)
         {
             lock (_lock)
             {
@@ -85,13 +85,13 @@ namespace Namotion.Storage
                         if (blobSegments.Length == pathSegments.Length + 1 &&
                             blobSegments.Take(blobSegments.Length - 1).SequenceEqual(pathSegments))
                         {
-                            yield return BlobItem.CreateBlob(blob.Key, blobSegments.Last());
+                            yield return BlobElement.CreateBlob(blob.Key, blobSegments.Last());
                         }
 
                         for (var i = 1; i < blobSegments.Length; i++)
                         {
                             var path = string.Join("/", blobSegments.Take(i));
-                            yield return BlobItem.CreateContainer(path, blobSegments.Skip(i - 1).First());
+                            yield return BlobElement.CreateContainer(path, blobSegments.Skip(i - 1).First());
                         }
                     }
                 }
