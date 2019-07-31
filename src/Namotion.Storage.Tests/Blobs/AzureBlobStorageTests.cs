@@ -1,20 +1,17 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Namotion.Storage;
-using Namotion.Storage.Tests;
 using Namotion.Storage.Abstractions;
-using System.IO;
+using Namotion.Storage.Azure.Storage.Blob;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Namotion.Messaging.Tests.Implementations
+namespace Namotion.Storage.Tests.Blobs
 {
-    public class FileSystemBlobStorageTests : StorageTestsBase
+    public class AzureBlobStorageTests : BlobStorageTestsBase
     {
-        protected override IBlobContainer CreateBlobContainer(IConfiguration configuration)
+        protected override IBlobStorage CreateBlobStorage(IConfiguration configuration)
         {
-            var tempDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-            Directory.CreateDirectory(tempDirectory);
-            return FileSystemBlobStorage.CreateWithBasePath(tempDirectory);
+            return AzureBlobStorage
+                .CreateFromConnectionString(configuration["AzureBlobStorageConnectionString"]);
         }
 
         public override async Task<BlobProperties> WhenWritingBlob_ThenPropertiesAreAvailable()
@@ -24,6 +21,7 @@ namespace Namotion.Messaging.Tests.Implementations
             // Assert
             Assert.NotNull(properties.Created);
             Assert.NotNull(properties.LastModified);
+            Assert.NotNull(properties.ETag);
 
             return properties;
         }

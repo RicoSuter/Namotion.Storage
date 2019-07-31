@@ -2,24 +2,32 @@
 {
     public class BlobItem
     {
-        private BlobItem(string path, bool isBlob, bool isContainer)
+        private BlobItem(string id, string name, bool isBlob, bool isContainer)
         {
-            Path = path;
+            Id = id;
+            Name = name;
             IsBlob = isBlob;
             IsContainer = isContainer;
         }
 
-        public static BlobItem CreateBlob(string path)
+        public static BlobItem CreateBlob(string id, string name)
         {
-            return new BlobItem(path, true, false);
+            return new BlobItem(id, name, true, false);
         }
 
-        public static BlobItem CreateContainer(string path)
+        public static BlobItem CreateContainer(string id, string name)
         {
-            return new BlobItem(path, false, true);
+            return new BlobItem(id, name, false, true);
         }
 
-        public string Path { get; }
+        public static BlobItem CreateContainer(string name)
+        {
+            return new BlobItem(name, name, false, true);
+        }
+
+        public string Id { get; }
+
+        public string Name { get; }
 
         public bool IsBlob { get; }
 

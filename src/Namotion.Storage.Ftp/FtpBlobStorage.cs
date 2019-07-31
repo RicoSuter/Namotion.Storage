@@ -81,7 +81,9 @@ namespace Namotion.Storage.Ftp
 
             var items = await _client.GetListingAsync(path).ConfigureAwait(false);
             return items
-                .Select(i => i.Type == FtpFileSystemObjectType.Directory ? BlobItem.CreateContainer(i.Name) : BlobItem.CreateBlob(i.Name))
+                .Select(i => i.Type == FtpFileSystemObjectType.Directory ?
+                    BlobItem.CreateContainer(i.FullName, i.Name) :
+                    BlobItem.CreateBlob(i.FullName, i.Name))
                 .ToArray();
         }
 

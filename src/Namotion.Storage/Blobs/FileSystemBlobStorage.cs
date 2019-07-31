@@ -65,12 +65,10 @@ namespace Namotion.Storage
             var fullPath = GetFullPath(path);
 
             var directories = Directory.GetDirectories(fullPath)
-                .Select(d => Path.GetFileName(d))
-                .Select(d => BlobItem.CreateContainer(d));
+                .Select(d => BlobItem.CreateContainer(d, Path.GetFileName(d)));
 
             var files = Directory.GetFiles(fullPath)
-                .Select(d => Path.GetFileName(d))
-                .Select(d => BlobItem.CreateBlob(d));
+                .Select(d => BlobItem.CreateBlob(d, Path.GetFileName(d)));
 
             return Task.FromResult(directories.Concat(files).ToArray());
         }
