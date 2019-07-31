@@ -9,7 +9,7 @@ namespace Namotion.Messaging.Tests.Implementations
     {
         protected override IBlobContainer CreateBlobContainer(IConfiguration configuration)
         {
-            return FtpBlobStorage.Create("rsuter.com", "test", configuration["FtpPassword"]);
+            return FtpBlobStorage.Create("rsuter.com", 22, "test", configuration["FtpPassword"]);
         }
     }
 }

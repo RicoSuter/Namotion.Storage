@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,9 +13,9 @@ namespace Namotion.Storage.Ftp
     {
         private readonly FtpClient _client;
 
-        private FtpBlobStorage(string host, string username, string password)
+        private FtpBlobStorage(string host, int port, string username, string password)
         {
-            _client = new FtpClient(host);
+            _client = port != 0 ? new FtpClient(host) : new FtpClient(host, port, null, null);
 
             if (!string.IsNullOrEmpty(username))
             {
@@ -24,7 +25,12 @@ namespace Namotion.Storage.Ftp
 
         public static FtpBlobStorage Create(string host, string username, string password)
         {
-            return new FtpBlobStorage(host, username, password);
+            return new FtpBlobStorage(host, 0, username, password);
+        }
+
+        public static FtpBlobStorage Create(string host, int port, string username, string password)
+        {
+            return new FtpBlobStorage(host, port, username, password);
         }
 
         public async Task<Stream> OpenReadAsync(string path, CancellationToken cancellationToken = default)
@@ -70,17 +76,34 @@ namespace Namotion.Storage.Ftp
         public async Task<BlobProperties> GetPropertiesAsync(string path, CancellationToken cancellationToken = default)
         {
             await _client.AutoConnectAsync(cancellationToken).ConfigureAwait(false);
-            try
+
+            if (_client.Capabilities.Contains(FtpCapability.MLSD))
             {
-                var info = await _client.GetObjectInfoAsync(path, true).ConfigureAwait(false);
-                return new BlobProperties(info.Size, info.Created.ToUniversalTime(), info.Modified.ToUniversalTime());
+                try
+                {
+                    var info = await _client.GetObjectInfoAsync(path, true).ConfigureAwait(false);
+                    return new BlobProperties(info.Size, info.Created.ToUniversalTime(), info.Modified.ToUniversalTime());
+                }
+                catch (PlatformNotSupportedException)
+                {
+                    return await GetPropertiesWithListingAsync(path).ConfigureAwait(false);
+                }
             }
-            catch (PlatformNotSupportedException)
+            else
             {
-                var fileSizeTask = _client.GetFileSizeAsync(path, cancellationToken).ConfigureAwait(false);
-                var modifiedTimeTask = _client.GetModifiedTimeAsync(path, FtpDate.UTC, cancellationToken).ConfigureAwait(false);
-                return new BlobProperties(await fileSizeTask, null, await modifiedTimeTask);
+                return await GetPropertiesWithListingAsync(path).ConfigureAwait(false);
             }
+        }
+
+        private async Task<BlobProperties> GetPropertiesWithListingAsync(string path)
+        {
+            var name = Path.GetFileName(path);
+            var directory = Path.GetDirectoryName(path);
+
+            var items = await _client.GetListingAsync(directory).ConfigureAwait(false);
+            var item = items.Single(i => i.Name == name);
+
+            return new BlobProperties(item.Size, item.Created.ToUniversalTime(), item.Modified.ToUniversalTime());
         }
 
         public void Dispose()
