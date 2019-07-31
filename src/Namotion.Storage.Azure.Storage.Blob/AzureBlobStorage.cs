@@ -2,6 +2,7 @@
 using Microsoft.WindowsAzure.Storage.Blob;
 using Namotion.Storage.Abstractions;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -36,7 +37,7 @@ namespace Namotion.Storage.Azure.Storage.Blob
 
         private async Task<CloudBlockBlob> GetBlobReferenceAsync(string path, CancellationToken cancellationToken)
         {
-            var pathSegments = path.Split('/');
+            var pathSegments = path.Trim('/').Split('/').Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
             var containerName = pathSegments.First();
             var blobName = string.Join("/", pathSegments.Skip(1));
 
@@ -71,6 +72,62 @@ namespace Namotion.Storage.Azure.Storage.Blob
             }
             catch (Exception e) when (e.Message.Contains("does not exist."))
             {
+            }
+        }
+
+        public async Task<BlobItem[]> ListAsync(string path, CancellationToken cancellationToken = default)
+        {
+            var pathSegments = path.Trim('/').Split('/').Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
+            if (pathSegments.Length == 0)
+            {
+                var cloudBlobClient = _storageAccount.CreateCloudBlobClient();
+
+                BlobContinuationToken continuationToken = null;
+                var results = new List<BlobItem>();
+                do
+                {
+                    var response = await cloudBlobClient.ListContainersSegmentedAsync(continuationToken).ConfigureAwait(false);
+                    continuationToken = response.ContinuationToken;
+                    results.AddRange(response.Results.Select(c => BlobItem.CreateContainer(c.Name)));
+                }
+                while (continuationToken != null);
+
+                return results.ToArray();
+            }
+            else
+            {
+                var containerName = pathSegments.First();
+                var containerPath = string.Join("/", pathSegments.Skip(1));
+                var container = await GetCloudBlobContainerAsync(containerName, cancellationToken).ConfigureAwait(false);
+
+                BlobContinuationToken continuationToken = null;
+                var results = new List<BlobItem>();
+                do
+                {
+                    var response = pathSegments.Skip(1).Any() ?
+                        await container.ListBlobsSegmentedAsync(containerPath, continuationToken).ConfigureAwait(false) :
+                        await container.ListBlobsSegmentedAsync(continuationToken).ConfigureAwait(false);
+
+                    continuationToken = response.ContinuationToken;
+                    results.AddRange(response.Results.Select(c =>
+                    {
+                        if (c is CloudBlob blob)
+                        {
+                            return BlobItem.CreateBlob(blob.Name);
+                        }
+                        else if (c is CloudBlobDirectory directory)
+                        {
+                            return BlobItem.CreateContainer(directory.Prefix.Trim('/').Split('/').Last());
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }).Where(c => c != null));
+                }
+                while (continuationToken != null);
+
+                return results.ToArray();
             }
         }
 

@@ -75,6 +75,16 @@ namespace Namotion.Storage.Ftp
             return await _client.FileExistsAsync(path, cancellationToken).ConfigureAwait(false);
         }
 
+        public async Task<BlobItem[]> ListAsync(string path, CancellationToken cancellationToken = default)
+        {
+            await _client.AutoConnectAsync(cancellationToken).ConfigureAwait(false);
+
+            var items = await _client.GetListingAsync(path).ConfigureAwait(false);
+            return items
+                .Select(i => i.Type == FtpFileSystemObjectType.Directory ? BlobItem.CreateContainer(i.Name) : BlobItem.CreateBlob(i.Name))
+                .ToArray();
+        }
+
         public async Task<BlobProperties> GetPropertiesAsync(string path, CancellationToken cancellationToken = default)
         {
             await _client.AutoConnectAsync(cancellationToken).ConfigureAwait(false);

@@ -1,4 +1,5 @@
 ﻿using Namotion.Storage.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -41,6 +42,11 @@ namespace Namotion.Storage
         public Task<Stream> OpenWriteAsync(string path, CancellationToken cancellationToken = default)
         {
             return Task.FromResult<Stream>(new InternalMemoryStream(this, path));
+        }
+
+        public Task<BlobItem[]> ListAsync(string path, CancellationToken cancellationToken = default)
+        {
+            throw new NotSupportedException();
         }
 
         public Task DeleteAsync(string path, CancellationToken cancellationToken = default)

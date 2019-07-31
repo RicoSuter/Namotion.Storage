@@ -1,5 +1,6 @@
 ﻿using Namotion.Storage.Abstractions;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -57,6 +58,21 @@ namespace Namotion.Storage
             var fullPath = GetFullPath(path);
             File.Delete(fullPath);
             return Task.CompletedTask;
+        }
+
+        public Task<BlobItem[]> ListAsync(string path, CancellationToken cancellationToken = default)
+        {
+            var fullPath = GetFullPath(path);
+
+            var directories = Directory.GetDirectories(fullPath)
+                .Select(d => Path.GetFileName(d))
+                .Select(d => BlobItem.CreateContainer(d));
+
+            var files = Directory.GetFiles(fullPath)
+                .Select(d => Path.GetFileName(d))
+                .Select(d => BlobItem.CreateBlob(d));
+
+            return Task.FromResult(directories.Concat(files).ToArray());
         }
 
         public void Dispose()

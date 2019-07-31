@@ -41,6 +41,11 @@ namespace Namotion.Storage
             return _storage.DeleteAsync(_containerName + "/" + path, cancellationToken);
         }
 
+        public Task<BlobItem[]> ListAsync(string path, CancellationToken cancellationToken = default)
+        {
+            return _storage.ListAsync(_containerName + "/" + path, cancellationToken);
+        }
+
         public void Dispose()
         {
         }

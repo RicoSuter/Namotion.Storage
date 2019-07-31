@@ -11,5 +11,7 @@ namespace Namotion.Storage.Abstractions
         Task<BlobProperties> GetPropertiesAsync(string path, CancellationToken cancellationToken = default);
 
         Task<Stream> OpenReadAsync(string path, CancellationToken cancellationToken = default);
+
+        Task<BlobItem[]> ListAsync(string path, CancellationToken cancellationToken = default);
     }
 }

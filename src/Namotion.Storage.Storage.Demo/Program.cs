@@ -1,4 +1,5 @@
-﻿using Namotion.Storage.Azure.Storage.Blob;
+﻿using Namotion.Storage.Abstractions;
+using Namotion.Storage.Azure.Storage.Blob;
 using System;
 using System.Threading.Tasks;
 
@@ -28,6 +29,8 @@ namespace Namotion.Storage.Demo
             await container.WriteAsStringAsync("abc", "Hello world! " + DateTimeOffset.Now);
             var output = await container.ReadAsStringAsync("abc");
             Console.WriteLine("Output: " + output);
+
+            var items = await container.ListAsync();
 
             // Write & read JSON
             var inputPerson = new
