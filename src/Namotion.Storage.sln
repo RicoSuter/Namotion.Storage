@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29009.5
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Namotion.Storage", "Namotion.Storage\Namotion.Storage.csproj", "{2D2A2EC6-04FA-4AD2-9FDC-C9883CF61491}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Namotion.Storage.Abstractions", "Namotion.Storage.Abstractions\Namotion.Storage.Abstractions.csproj", "{B2EC4DD5-A869-4154-A216-CE5BED5E0FBE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Namotion.Storage.Azure.Storage.Blob", "Namotion.Storage.Azure.Storage.Blob\Namotion.Storage.Azure.Storage.Blob.csproj", "{8652266D-DB01-47D3-99E8-234217138E49}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Namotion.Storage.Json", "Namotion.Storage.Json\Namotion.Storage.Json.csproj", "{8CC9481F-3799-4AFA-A675-385512723B1A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Namotion.Storage.Demo", "Namotion.Storage.Storage.Demo\Namotion.Storage.Demo.csproj", "{192E823F-3969-46D2-8B3A-1DCC1E66D2D2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Namotion.Storage.Tests", "Namotion.Storage.Tests\Namotion.Storage.Tests.csproj", "{272699CC-7E44-4405-93FB-77AAAAD485B0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2D2A2EC6-04FA-4AD2-9FDC-C9883CF61491}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D2A2EC6-04FA-4AD2-9FDC-C9883CF61491}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D2A2EC6-04FA-4AD2-9FDC-C9883CF61491}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D2A2EC6-04FA-4AD2-9FDC-C9883CF61491}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2EC4DD5-A869-4154-A216-CE5BED5E0FBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2EC4DD5-A869-4154-A216-CE5BED5E0FBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2EC4DD5-A869-4154-A216-CE5BED5E0FBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2EC4DD5-A869-4154-A216-CE5BED5E0FBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8652266D-DB01-47D3-99E8-234217138E49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8652266D-DB01-47D3-99E8-234217138E49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8652266D-DB01-47D3-99E8-234217138E49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8652266D-DB01-47D3-99E8-234217138E49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CC9481F-3799-4AFA-A675-385512723B1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CC9481F-3799-4AFA-A675-385512723B1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CC9481F-3799-4AFA-A675-385512723B1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CC9481F-3799-4AFA-A675-385512723B1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{192E823F-3969-46D2-8B3A-1DCC1E66D2D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{192E823F-3969-46D2-8B3A-1DCC1E66D2D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{192E823F-3969-46D2-8B3A-1DCC1E66D2D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{192E823F-3969-46D2-8B3A-1DCC1E66D2D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{272699CC-7E44-4405-93FB-77AAAAD485B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{272699CC-7E44-4405-93FB-77AAAAD485B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{272699CC-7E44-4405-93FB-77AAAAD485B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{272699CC-7E44-4405-93FB-77AAAAD485B0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7FE1879A-D4E6-47A1-AEA4-1B8E510C78B5}
+	EndGlobalSection
+EndGlobal
