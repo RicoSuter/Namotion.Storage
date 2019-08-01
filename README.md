@@ -13,11 +13,11 @@ By programming against a messaging abstraction you enable the following scenario
 
 ## Usage
 
-TODO
+TBD.
 
 ## Extensions
 
-TODO
+TBD.
 
 ## Core packages
 
@@ -44,13 +44,14 @@ Internal:
 
 [![Nuget](https://img.shields.io/nuget/v/Namotion.Storage.Json.svg)](https://www.nuget.org/packages/Namotion.Storage.Json/)
 
-TODO
+Extension methods:
+
+- WriteAsJson
+- ReadAsJson
 
 ## Implementation packages
 
 The following packages should only be used in the head project, i.e. directly in your application bootstrapping project where the dependency injection container is initialized.
-
-TODO
 
 ### Namotion.Storage
 
@@ -65,10 +66,14 @@ Implementations:
 
 [![Nuget](https://img.shields.io/nuget/v/Namotion.Storage.Azure.Storage.Blob.svg)](https://www.nuget.org/packages/Namotion.Storage.Azure.Storage.Blob/)
 
-TODO
+Implementations:
+
+- AzureBlobStorage
 
 ### Namotion.Storage.Ftp
 
 [![Nuget](https://img.shields.io/nuget/v/Namotion.Storage.Ftp.svg)](https://www.nuget.org/packages/Namotion.Storage.Ftp.Blob/)
 
-TODO
+Implementations:
+
+- FtpBlobStorage
