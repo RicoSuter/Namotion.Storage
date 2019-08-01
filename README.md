@@ -27,6 +27,8 @@ TODO
 
 **Blobs**
 
+Inject `IBlobStorage` or `IBlobContainer` but do net get a container from a storage (violates [SRP](http://software-pattern.org/single-responsibility-principle)).
+
 - **BlobProperties\<T>**
 - **IBlobStorage**: A blob storage where blobs are stored in a container and cannot be directly stored. Only 'containerName/blobName' or 'containerName/subDirectories/blobName' are allowed.
 - **IBlobContainer\<T>**
