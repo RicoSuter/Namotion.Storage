@@ -42,6 +42,8 @@ Internal:
 - **IBlobReader**: Internal (do not use directly.)
 - **IBlobWriter**: Internal (do not use directly.)
 
+The idea behind the generic interfaces is to allow multiple instance registrations, read [Dependency Injection in .NET: A way to work around missing named registrations](https://blog.rsuter.com/dotnet-dependency-injection-way-to-work-around-missing-named-registrations/) for more information.
+
 ### Namotion.Storage.Json
 
 [![Nuget](https://img.shields.io/nuget/v/Namotion.Storage.Json.svg)](https://www.nuget.org/packages/Namotion.Storage.Json/)
