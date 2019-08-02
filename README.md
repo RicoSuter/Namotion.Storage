@@ -2,6 +2,8 @@
 
 [![Azure DevOps](https://img.shields.io/azure-devops/build/rsuter/Namotion/19/master.svg)](https://rsuter.visualstudio.com/Namotion/_build?definitionId=19)
 
+<img align="left" src="https://raw.githubusercontent.com/RicoSuter/Namotion.Reflection/master/assets/Icon.png" width="48px" height="48px">
+
 The Namotion.Storage .NET libraries provide abstractions and implementations for storage service like blob storages or file systems.
 
 By programming against a messaging abstraction you enable the following scenarios: 
