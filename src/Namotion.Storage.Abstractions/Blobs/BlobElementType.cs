@@ -13,6 +13,6 @@
         /// <summary>
         /// A blob.
         /// </summary>
-        Blob = 0,
+        Blob = 1,
     }
 }
