@@ -110,15 +110,22 @@ namespace Namotion.Storage
 
         public Task<BlobElement[]> ListAsync(string path, CancellationToken cancellationToken = default)
         {
-            var fullPath = GetFullPath(path);
+            try
+            {
+                var fullPath = GetFullPath(path);
 
-            var directories = Directory.GetDirectories(fullPath)
-                .Select(d => BlobElement.CreateContainer(d, Path.GetFileName(d)));
+                var directories = Directory.GetDirectories(fullPath)
+                    .Select(d => BlobElement.CreateContainer(d, Path.GetFileName(d)));
 
-            var files = Directory.GetFiles(fullPath)
-                .Select(d => BlobElement.CreateBlob(d, Path.GetFileName(d)));
+                var files = Directory.GetFiles(fullPath)
+                    .Select(d => BlobElement.CreateBlob(d, Path.GetFileName(d)));
 
-            return Task.FromResult(directories.Concat(files).ToArray());
+                return Task.FromResult(directories.Concat(files).ToArray());
+            }
+            catch (DirectoryNotFoundException e)
+            {
+                throw new ContainerNotFoundException(path, e);
+            }           
         }
 
         public void Dispose()

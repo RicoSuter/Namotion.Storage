@@ -154,6 +154,11 @@ namespace Namotion.Storage.Azure.Storage.Blob
                 }
                 while (continuationToken != null);
 
+                if (results.Count == 0)
+                {
+                    throw new ContainerNotFoundException(path, null);
+                }
+
                 return results.ToArray();
             }
         }

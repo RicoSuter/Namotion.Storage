@@ -100,13 +100,19 @@ namespace Namotion.Storage.Ftp
         public async Task<BlobElement[]> ListAsync(string path, CancellationToken cancellationToken = default)
         {
             await _client.AutoConnectAsync(cancellationToken).ConfigureAwait(false);
-
-            var items = await _client.GetListingAsync(path).ConfigureAwait(false);
-            return items
-                .Select(i => i.Type == FtpFileSystemObjectType.Directory ?
-                    BlobElement.CreateContainer(i.FullName, i.Name) :
-                    new BlobElement(i.FullName, i.Name, BlobElementType.Blob, i.Size, i.Created.ToUniversalTime(), i.Modified.ToUniversalTime()))
-                .ToArray();
+            try
+            {
+                var items = await _client.GetListingAsync(path).ConfigureAwait(false);
+                return items
+                    .Select(i => i.Type == FtpFileSystemObjectType.Directory ?
+                        BlobElement.CreateContainer(i.FullName, i.Name) :
+                        new BlobElement(i.FullName, i.Name, BlobElementType.Blob, i.Size, i.Created.ToUniversalTime(), i.Modified.ToUniversalTime()))
+                    .ToArray();
+            }
+            catch (FtpCommandException e) when (e.CompletionCode == "550")
+            {
+                throw new ContainerNotFoundException(path, e);
+            }
         }
 
         public async Task<BlobElement> GetAsync(string path, CancellationToken cancellationToken = default)

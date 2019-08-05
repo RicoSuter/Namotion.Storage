@@ -90,11 +90,18 @@ namespace Namotion.Storage
         public Task<BlobElement[]> ListAsync(string path, CancellationToken cancellationToken = default)
         {
             var pathSegments = PathUtilities.GetSegments(path);
-            return Task.FromResult(ListInternal(pathSegments)
+            var elements = ListInternal(pathSegments)
                 .GroupBy(i => i.Id)
                 .Select(g => g.First())
                 .Where(i => PathUtilities.GetSegments(i.Id).Length == pathSegments.Length + 1)
-                .ToArray());
+                .ToArray();
+
+            if (elements.Length == 0)
+            {
+                throw new ContainerNotFoundException(path, null);
+            }
+
+            return Task.FromResult(elements);
         }
 
         private IEnumerable<BlobElement> ListInternal(string[] pathSegments)

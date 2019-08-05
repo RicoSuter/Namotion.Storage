@@ -133,6 +133,24 @@ namespace Namotion.Storage.Tests
             }
         }
 
+        [Theory]
+        [InlineData("doesnotexist")]
+        [InlineData("does/not/exist")]
+        public async Task WhenListingNonExistingContainer_ThenExceptionIsThrown(string path)
+        {
+            // Arrange
+            var config = GetConfiguration();
+            using (var container = GetBlobContainer(CreateBlobStorage(config)))
+            {
+                // Assert
+                await Assert.ThrowsAsync<ContainerNotFoundException>(async () =>
+                {
+                    // Act
+                    var result = await container.ListAsync(path);
+                });
+            }
+        }
+
         [Fact]
         public async Task WhenWritingJsonBlob_ThenItCanBeRead()
         {
