@@ -14,6 +14,12 @@ namespace Namotion.Storage.Tests.Blobs
                 .CreateFromConnectionString(configuration["AzureBlobStorageConnectionString"]);
         }
 
+        [Fact(Skip = "Not supported yet.")]
+        public override Task WhenAppendingBlob_ThenItHasBeenAppended()
+        {
+            return Task.CompletedTask;
+        }
+
         public override async Task<BlobElement> WhenWritingBlob_ThenPropertiesAreAvailable()
         {
             var properties = await base.WhenWritingBlob_ThenPropertiesAreAvailable();

@@ -22,7 +22,7 @@ namespace Namotion.Storage.Tests
                 {
                     // Act
                     var existsBeforeWrite = await container.ExistsAsync(path);
-                    await container.WriteAsStringAsync(path, content);
+                    await container.WriteStringAsync(path, content);
                     var existsAfterWrite = await container.ExistsAsync(path);
 
                     var result = await container.ReadAsStringAsync(path);
@@ -54,10 +54,10 @@ namespace Namotion.Storage.Tests
 
                 try
                 {
-                    await container.WriteAsStringAsync(path, "Hello world!");
+                    await container.WriteStringAsync(path, "Hello world!");
 
                     // Act
-                    var element = await container.GetElementAsync(path);
+                    var element = await container.GetAsync(path);
 
                     // Assert
                     Assert.True(element.Length > 0);
@@ -82,7 +82,7 @@ namespace Namotion.Storage.Tests
 
                 try
                 {
-                    await container.WriteAsStringAsync(path, content);
+                    await container.WriteStringAsync(path, content);
 
                     // Act
                     var result = await container.ReadAsStringAsync(path);
@@ -111,6 +111,24 @@ namespace Namotion.Storage.Tests
                 {
                     // Act
                     var result = await container.ReadAsStringAsync(path);
+                });
+            }
+        }
+
+        [Theory]
+        [InlineData("doesnotexist")]
+        [InlineData("does/not/exist")]
+        public async Task WhenGettingNonExistingBlob_ThenExceptionIsThrown(string path)
+        {
+            // Arrange
+            var config = GetConfiguration();
+            using (var container = GetBlobContainer(CreateBlobStorage(config)))
+            {
+                // Assert
+                await Assert.ThrowsAsync<BlobNotFoundException>(async () =>
+                {
+                    // Act
+                    var result = await container.GetAsync(path);
                 });
             }
         }
@@ -173,6 +191,33 @@ namespace Namotion.Storage.Tests
 
                     Assert.Single(items2);
                     Assert.Contains(items3, i => i.Name == blobName && i.Type == BlobElementType.Blob);
+                }
+                finally
+                {
+                    await container.DeleteAsync(path);
+                }
+            }
+        }
+
+        [Fact]
+        public virtual async Task WhenAppendingBlob_ThenItHasBeenAppended()
+        {
+            // Arrange
+            var config = GetConfiguration();
+            using (var container = GetBlobContainer(CreateBlobStorage(config)))
+            {
+                var path = Guid.NewGuid().ToString();
+
+                try
+                {
+                    // Act
+                    await container.WriteStringAsync(path, "a");
+                    await container.AppendStringAsync(path, "b");
+
+                    var result = await container.ReadAsStringAsync(path);
+
+                    // Assert
+                    Assert.Equal("ab", result);
                 }
                 finally
                 {

@@ -7,9 +7,17 @@ namespace Namotion.Storage
 {
     public static class StringBlobExtensions
     {
-        public static async Task WriteAsStringAsync(this IBlobWriter writer, string path, string value, CancellationToken cancellationToken = default)
+        public static async Task WriteStringAsync(this IBlobWriter writer, string path, string value, CancellationToken cancellationToken = default)
         {
             using (var streamWriter = new StreamWriter(await writer.OpenWriteAsync(path, cancellationToken).ConfigureAwait(false)))
+            {
+                await streamWriter.WriteAsync(value).ConfigureAwait(false);
+            }
+        }
+
+        public static async Task AppendStringAsync(this IBlobWriter writer, string path, string value, CancellationToken cancellationToken = default)
+        {
+            using (var streamWriter = new StreamWriter(await writer.OpenAppendAsync(path, cancellationToken).ConfigureAwait(false)))
             {
                 await streamWriter.WriteAsync(value).ConfigureAwait(false);
             }

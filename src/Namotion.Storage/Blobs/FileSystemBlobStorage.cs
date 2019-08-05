@@ -34,14 +34,25 @@ namespace Namotion.Storage
             return Task.FromResult(File.Exists(fullPath));
         }
 
-        public Task<BlobElement> GetElementAsync(string path, CancellationToken cancellationToken)
+        public Task<BlobElement> GetAsync(string path, CancellationToken cancellationToken)
         {
-            var fullPath = GetFullPath(path);
-            return Task.FromResult(new BlobElement(
-                path, null, BlobElementType.Blob,
-                new FileInfo(fullPath).Length,
-                File.GetCreationTimeUtc(fullPath),
-                File.GetLastWriteTimeUtc(fullPath)));
+            try
+            {
+                var fullPath = GetFullPath(path);
+                return Task.FromResult(new BlobElement(
+                    path, null, BlobElementType.Blob,
+                    new FileInfo(fullPath).Length,
+                    File.GetCreationTimeUtc(fullPath),
+                    File.GetLastWriteTimeUtc(fullPath)));
+            }
+            catch (FileNotFoundException e)
+            {
+                throw new BlobNotFoundException(path, e);
+            }
+            catch (DirectoryNotFoundException e)
+            {
+                throw new BlobNotFoundException(path, e);
+            }
         }
 
         public Task<Stream> OpenReadAsync(string path, CancellationToken cancellationToken = default)
@@ -50,6 +61,23 @@ namespace Namotion.Storage
             {
                 var fullPath = GetFullPath(path);
                 return Task.FromResult<Stream>(File.OpenRead(fullPath));
+            }
+            catch (FileNotFoundException e)
+            {
+                throw new BlobNotFoundException(path, e);
+            }
+            catch (DirectoryNotFoundException e)
+            {
+                throw new BlobNotFoundException(path, e);
+            }
+        }
+
+        public Task<Stream> OpenAppendAsync(string path, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var fullPath = GetFullPath(path);
+                return Task.FromResult<Stream>(File.Open(fullPath, FileMode.Append, FileAccess.Write));
             }
             catch (FileNotFoundException e)
             {

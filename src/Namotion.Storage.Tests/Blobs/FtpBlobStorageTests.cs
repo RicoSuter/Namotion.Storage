@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Namotion.Storage.Abstractions;
 using Namotion.Storage.Ftp;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace Namotion.Storage.Tests.Blobs
 {
@@ -10,6 +12,12 @@ namespace Namotion.Storage.Tests.Blobs
         {
             return FtpBlobStorage
                 .Create("rsuter.com", 22, "test", configuration["FtpPassword"]);
+        }
+
+        [Fact(Skip = "Test FTP server does not support append.")]
+        public override Task WhenAppendingBlob_ThenItHasBeenAppended()
+        {
+            return Task.CompletedTask;
         }
     }
 }

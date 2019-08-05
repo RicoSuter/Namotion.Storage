@@ -37,9 +37,9 @@ namespace Namotion.Storage.Ftp
 
         public async Task<Stream> OpenReadAsync(string path, CancellationToken cancellationToken = default)
         {
+            await _client.AutoConnectAsync(cancellationToken).ConfigureAwait(false);
             try
             {
-                await _client.AutoConnectAsync(cancellationToken).ConfigureAwait(false);
                 return await _client.OpenReadAsync(path, FtpDataType.Binary, 0, true, cancellationToken).ConfigureAwait(false);
             }
             catch (FtpCommandException e) when (e.CompletionCode == "550")
@@ -60,6 +60,21 @@ namespace Namotion.Storage.Ftp
                 var directory = Path.GetDirectoryName(path);
                 await _client.CreateDirectoryAsync(directory, cancellationToken);
                 return await _client.OpenWriteAsync(path, FtpDataType.Binary, true, cancellationToken).ConfigureAwait(false);
+            }
+        }
+
+        public async Task<Stream> OpenAppendAsync(string path, CancellationToken cancellationToken = default)
+        {
+            await _client.AutoConnectAsync(cancellationToken).ConfigureAwait(false);
+            try
+            {
+                return await _client.OpenAppendAsync(path, FtpDataType.Binary, true, cancellationToken).ConfigureAwait(false);
+            }
+            catch (FtpCommandException e) when (e.CompletionCode == "550")
+            {
+                var directory = Path.GetDirectoryName(path);
+                await _client.CreateDirectoryAsync(directory, cancellationToken);
+                return await _client.OpenAppendAsync(path, FtpDataType.Binary, true, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -94,27 +109,34 @@ namespace Namotion.Storage.Ftp
                 .ToArray();
         }
 
-        public async Task<BlobElement> GetElementAsync(string path, CancellationToken cancellationToken = default)
+        public async Task<BlobElement> GetAsync(string path, CancellationToken cancellationToken = default)
         {
             await _client.AutoConnectAsync(cancellationToken).ConfigureAwait(false);
 
-            if (_client.Capabilities.Contains(FtpCapability.MLSD) && !_loadPropertiesWithListing)
+            try
             {
-                try
+                if (_client.Capabilities.Contains(FtpCapability.MLSD) && !_loadPropertiesWithListing)
                 {
-                    var info = await _client.GetObjectInfoAsync(path, true).ConfigureAwait(false);
-                    return new BlobElement(path, null, BlobElementType.Blob,
-                        info.Size, info.Created.ToUniversalTime(), info.Modified.ToUniversalTime());
+                    try
+                    {
+                        var info = await _client.GetObjectInfoAsync(path, true).ConfigureAwait(false);
+                        return new BlobElement(path, null, BlobElementType.Blob,
+                            info.Size, info.Created.ToUniversalTime(), info.Modified.ToUniversalTime());
+                    }
+                    catch (PlatformNotSupportedException)
+                    {
+                        _loadPropertiesWithListing = true;
+                        return await GetPropertiesWithListingAsync(path).ConfigureAwait(false);
+                    }
                 }
-                catch (PlatformNotSupportedException)
+                else
                 {
-                    _loadPropertiesWithListing = true;
                     return await GetPropertiesWithListingAsync(path).ConfigureAwait(false);
                 }
             }
-            else
+            catch (FtpCommandException e) when (e.CompletionCode == "550")
             {
-                return await GetPropertiesWithListingAsync(path).ConfigureAwait(false);
+                throw new BlobNotFoundException(path, e);
             }
         }
 
@@ -124,7 +146,11 @@ namespace Namotion.Storage.Ftp
             var directory = Path.GetDirectoryName(path);
 
             var items = await _client.GetListingAsync(directory).ConfigureAwait(false);
-            var item = items.Single(i => i.Name == name);
+            var item = items.SingleOrDefault(i => i.Name == name);
+            if (item == null)
+            {
+                throw new BlobNotFoundException(path, null);
+            }
 
             return new BlobElement(path, null, BlobElementType.Blob,
                 item.Size, item.Created.ToUniversalTime(), item.Modified.ToUniversalTime());

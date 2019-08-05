@@ -26,7 +26,7 @@ namespace Namotion.Storage.Demo
             }
 
             // Write & read string
-            await container.WriteAsStringAsync("abc", "Hello world! " + DateTimeOffset.Now);
+            await container.WriteStringAsync("abc", "Hello world! " + DateTimeOffset.Now);
             var output = await container.ReadAsStringAsync("abc");
             Console.WriteLine("Output: " + output);
 

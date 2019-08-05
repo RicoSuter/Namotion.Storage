@@ -17,14 +17,25 @@ namespace Namotion.Storage
             _blobs = blobs ?? new Dictionary<string, byte[]>();
         }
 
-        public Task<BlobElement> GetElementAsync(string path, CancellationToken cancellationToken)
+        public Task<BlobElement> GetAsync(string path, CancellationToken cancellationToken)
         {
-            return Task.FromResult(new BlobElement(path, null, BlobElementType.Blob, _blobs[path].LongLength));
+            lock (_lock)
+            {
+                if (!_blobs.ContainsKey(path))
+                {
+                    throw new BlobNotFoundException(path, null);
+                }
+
+                return Task.FromResult(new BlobElement(path, null, BlobElementType.Blob, _blobs[path].LongLength));
+            }
         }
 
         public Task<bool> ExistsAsync(string path, CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(_blobs.ContainsKey(path));
+            lock (_lock)
+            {
+                return Task.FromResult(_blobs.ContainsKey(path));
+            }
         }
 
         public Task<Stream> OpenReadAsync(string path, CancellationToken cancellationToken = default)
@@ -46,6 +57,13 @@ namespace Namotion.Storage
         public Task<Stream> OpenWriteAsync(string path, CancellationToken cancellationToken = default)
         {
             return Task.FromResult<Stream>(new InternalMemoryStream(this, path));
+        }
+
+        public Task<Stream> OpenAppendAsync(string path, CancellationToken cancellationToken = default)
+        {
+            var stream = new InternalMemoryStream(this, path);
+            stream.Write(_blobs[path], 0, _blobs[path].Length);
+            return Task.FromResult<Stream>(stream);
         }
 
         public Task DeleteAsync(string path, CancellationToken cancellationToken = default)

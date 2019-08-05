@@ -24,9 +24,9 @@ namespace Namotion.Storage
             return _blobStorage.ExistsAsync(path, cancellationToken);
         }
 
-        public virtual Task<BlobElement> GetElementAsync(string path, CancellationToken cancellationToken = default)
+        public virtual Task<BlobElement> GetAsync(string path, CancellationToken cancellationToken = default)
         {
-            return _blobStorage.GetElementAsync(path, cancellationToken);
+            return _blobStorage.GetAsync(path, cancellationToken);
         }
 
         public virtual Task<BlobElement[]> ListAsync(string path, CancellationToken cancellationToken = default)
@@ -42,6 +42,11 @@ namespace Namotion.Storage
         public virtual Task<Stream> OpenWriteAsync(string path, CancellationToken cancellationToken = default)
         {
             return _blobStorage.OpenWriteAsync(path, cancellationToken);
+        }
+
+        public virtual Task<Stream> OpenAppendAsync(string path, CancellationToken cancellationToken = default)
+        {
+            return _blobStorage.OpenAppendAsync(path, cancellationToken);
         }
 
         public virtual void Dispose()

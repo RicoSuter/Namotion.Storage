@@ -1,6 +1,7 @@
 ﻿using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Namotion.Storage.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,16 +24,23 @@ namespace Namotion.Storage.Azure.Storage.Blob
             return new AzureBlobStorage(CloudStorageAccount.Parse(connectionString));
         }
 
-        public async Task<BlobElement> GetElementAsync(string path, CancellationToken cancellationToken)
+        public async Task<BlobElement> GetAsync(string path, CancellationToken cancellationToken)
         {
-            var blob = await GetBlobReferenceAsync(path, cancellationToken).ConfigureAwait(false);
-            await blob.FetchAttributesAsync().ConfigureAwait(false);
-            return new BlobElement(
-                path, null, BlobElementType.Blob,
-                blob.Properties.Length,
-                blob.Properties.Created,
-                blob.Properties.LastModified,
-                blob.Properties.ETag);
+            try
+            {
+                var blob = await GetBlobReferenceAsync(path, cancellationToken).ConfigureAwait(false);
+                await blob.FetchAttributesAsync().ConfigureAwait(false);
+                return new BlobElement(
+                    path, null, BlobElementType.Blob,
+                    blob.Properties.Length,
+                    blob.Properties.Created,
+                    blob.Properties.LastModified,
+                    blob.Properties.ETag);
+            }
+            catch (StorageException e) when (e.Message.Contains("does not exist."))
+            {
+                throw new BlobNotFoundException(path, e);
+            }
         }
 
         private async Task<CloudBlockBlob> GetBlobReferenceAsync(string path, CancellationToken cancellationToken)
@@ -62,6 +70,11 @@ namespace Namotion.Storage.Azure.Storage.Blob
         {
             var blob = await GetBlobReferenceAsync(path, cancellationToken).ConfigureAwait(false);
             return await blob.OpenWriteAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        public Task<Stream> OpenAppendAsync(string path, CancellationToken cancellationToken = default)
+        {
+            throw new NotSupportedException();
         }
 
         public async Task<bool> ExistsAsync(string path, CancellationToken cancellationToken = default)
