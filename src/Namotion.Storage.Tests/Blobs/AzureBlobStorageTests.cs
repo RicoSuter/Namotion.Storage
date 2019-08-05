@@ -20,16 +20,16 @@ namespace Namotion.Storage.Tests.Blobs
             return Task.CompletedTask;
         }
 
-        public override async Task<BlobElement> WhenWritingBlob_ThenPropertiesAreAvailable()
+        public override async Task<BlobElement> WhenWritingBlob_ThenElementPropertiesAreAvailable()
         {
-            var properties = await base.WhenWritingBlob_ThenPropertiesAreAvailable();
+            var element = await base.WhenWritingBlob_ThenElementPropertiesAreAvailable();
 
             // Assert
-            Assert.NotNull(properties.Created);
-            Assert.NotNull(properties.LastModified);
-            Assert.NotNull(properties.ETag);
+            Assert.NotNull(element.Created);
+            Assert.NotNull(element.LastModified);
+            Assert.NotNull(element.ETag);
 
-            return properties;
+            return element;
         }
     }
 }

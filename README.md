@@ -31,10 +31,16 @@ TBD.
 
 Inject `IBlobStorage` or `IBlobContainer` but do net get a container from a storage (violates [SRP](http://software-pattern.org/single-responsibility-principle)).
 
-- **BlobProperties\<T>**
 - **IBlobStorage**: A blob storage where blobs are stored in a container and cannot be directly stored. Only `containerName/blobName` or `containerName/subDirectories/blobName` are allowed.
 - **IBlobContainer\<T>**
 - **IBlobContainer**: A blob container where blobs can be directly stored or in a subdirectory. A container acts like a simple/basic virtual file system.
+    - `OpenWriteAsync`: Creates or overrides an existing blob
+    - `OpenAppendAsync`: Creates or appends to an existing blob
+	- `OpenReadAsync`
+	- `ExistsAsync`
+	- `GetAsync`
+	- `ListAsync`
+	- `DeleteAsync`: Deletes a blob
 - **BlobElement**: Metadata and properties of a blob or container.
 
 Internal: 

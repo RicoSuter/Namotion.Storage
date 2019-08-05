@@ -8,9 +8,9 @@ namespace Namotion.Storage.Tests.Blobs
 {
     public class FileSystemBlobStorageTests : BlobStorageTestsBase
     {
-        public override async Task<BlobElement> WhenWritingBlob_ThenPropertiesAreAvailable()
+        public override async Task<BlobElement> WhenWritingBlob_ThenElementPropertiesAreAvailable()
         {
-            var properties = await base.WhenWritingBlob_ThenPropertiesAreAvailable();
+            var properties = await base.WhenWritingBlob_ThenElementPropertiesAreAvailable();
 
             // Assert
             Assert.NotNull(properties.Created);

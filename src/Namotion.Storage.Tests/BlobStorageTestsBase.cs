@@ -44,7 +44,7 @@ namespace Namotion.Storage.Tests
         }
 
         [Fact]
-        public virtual async Task<BlobElement> WhenWritingBlob_ThenPropertiesAreAvailable()
+        public virtual async Task<BlobElement> WhenWritingBlob_ThenElementPropertiesAreAvailable()
         {
             // Arrange
             var config = GetConfiguration();
