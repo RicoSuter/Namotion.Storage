@@ -97,6 +97,24 @@ namespace Namotion.Storage.Tests
             }
         }
 
+        [Theory]
+        [InlineData("doesnotexist")]
+        [InlineData("does/not/exist")]
+        public async Task WhenReadingNonExistingBlob_ThenExceptionIsThrown(string path)
+        {
+            // Arrange
+            var config = GetConfiguration();
+            using (var container = GetBlobContainer(CreateBlobStorage(config)))
+            {
+                // Assert
+                await Assert.ThrowsAsync<BlobNotFoundException>(async () =>
+                {
+                    // Act
+                    var result = await container.ReadAsStringAsync(path);
+                });
+            }
+        }
+
         [Fact]
         public async Task WhenWritingJsonBlob_ThenItCanBeRead()
         {
@@ -149,7 +167,11 @@ namespace Namotion.Storage.Tests
                     // Assert
                     Assert.Contains(containers, i => i.Name == "mystorage" && i.Type == BlobElementType.Container);
                     Assert.Contains(items1, i => i.Name == "foo" && i.Type == BlobElementType.Container);
+
+                    Assert.Single(items2);
                     Assert.Contains(items2, i => i.Name == "bar" && i.Type == BlobElementType.Container);
+
+                    Assert.Single(items2);
                     Assert.Contains(items3, i => i.Name == blobName && i.Type == BlobElementType.Blob);
                 }
                 finally

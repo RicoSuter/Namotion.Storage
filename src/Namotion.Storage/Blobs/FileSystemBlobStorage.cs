@@ -46,8 +46,19 @@ namespace Namotion.Storage
 
         public Task<Stream> OpenReadAsync(string path, CancellationToken cancellationToken = default)
         {
-            var fullPath = GetFullPath(path);
-            return Task.FromResult<Stream>(File.OpenRead(fullPath));
+            try
+            {
+                var fullPath = GetFullPath(path);
+                return Task.FromResult<Stream>(File.OpenRead(fullPath));
+            }
+            catch (FileNotFoundException e)
+            {
+                throw new BlobNotFoundException(path, e);
+            }
+            catch (DirectoryNotFoundException e)
+            {
+                throw new BlobNotFoundException(path, e);
+            }
         }
 
         public Task<Stream> OpenWriteAsync(string path, CancellationToken cancellationToken = default)

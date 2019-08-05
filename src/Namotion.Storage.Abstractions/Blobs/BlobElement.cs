@@ -34,7 +34,7 @@ namespace Namotion.Storage.Abstractions
 
         public static BlobElement CreateContainer(string name)
         {
-            return new BlobElement(name, name, BlobElementType.Blob);
+            return new BlobElement(name, name, BlobElementType.Container);
         }
 
         /// <summary>

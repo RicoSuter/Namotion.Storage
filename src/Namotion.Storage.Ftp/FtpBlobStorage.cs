@@ -37,8 +37,15 @@ namespace Namotion.Storage.Ftp
 
         public async Task<Stream> OpenReadAsync(string path, CancellationToken cancellationToken = default)
         {
-            await _client.AutoConnectAsync(cancellationToken).ConfigureAwait(false);
-            return await _client.OpenReadAsync(path, FtpDataType.Binary, 0, true, cancellationToken).ConfigureAwait(false);
+            try
+            {
+                await _client.AutoConnectAsync(cancellationToken).ConfigureAwait(false);
+                return await _client.OpenReadAsync(path, FtpDataType.Binary, 0, true, cancellationToken).ConfigureAwait(false);
+            }
+            catch (FtpCommandException e) when (e.CompletionCode == "550")
+            {
+                throw new BlobNotFoundException(path, e);
+            }
         }
 
         public async Task<Stream> OpenWriteAsync(string path, CancellationToken cancellationToken = default)

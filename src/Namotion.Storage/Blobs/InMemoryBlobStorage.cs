@@ -31,6 +31,11 @@ namespace Namotion.Storage
         {
             lock (_lock)
             {
+                if (!_blobs.ContainsKey(path))
+                {
+                    throw new BlobNotFoundException(path, null);
+                }
+
                 return Task.FromResult<Stream>(new MemoryStream(_blobs[path].ToArray())
                 {
                     Position = 0
@@ -70,6 +75,7 @@ namespace Namotion.Storage
             return Task.FromResult(ListInternal(pathSegments)
                 .GroupBy(i => i.Id)
                 .Select(g => g.First())
+                .Where(i => PathUtilities.GetSegments(i.Id).Length == pathSegments.Length + 1)
                 .ToArray());
         }
 

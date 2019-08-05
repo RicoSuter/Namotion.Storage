@@ -1,7 +1,6 @@
 ﻿using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Namotion.Storage.Abstractions;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -48,8 +47,15 @@ namespace Namotion.Storage.Azure.Storage.Blob
 
         public async Task<Stream> OpenReadAsync(string path, CancellationToken cancellationToken = default)
         {
-            var blob = await GetBlobReferenceAsync(path, cancellationToken).ConfigureAwait(false);
-            return await blob.OpenReadAsync(cancellationToken).ConfigureAwait(false);
+            try
+            {
+                var blob = await GetBlobReferenceAsync(path, cancellationToken).ConfigureAwait(false);
+                return await blob.OpenReadAsync(cancellationToken).ConfigureAwait(false);
+            }
+            catch (StorageException e) when (e.Message.Contains("does not exist."))
+            {
+                throw new BlobNotFoundException(path, e);
+            }
         }
 
         public async Task<Stream> OpenWriteAsync(string path, CancellationToken cancellationToken = default)
@@ -71,7 +77,7 @@ namespace Namotion.Storage.Azure.Storage.Blob
                 var blob = await GetBlobReferenceAsync(path, cancellationToken).ConfigureAwait(false);
                 await blob.DeleteAsync(cancellationToken).ConfigureAwait(false);
             }
-            catch (Exception e) when (e.Message.Contains("does not exist."))
+            catch (StorageException e) when (e.Message.Contains("does not exist."))
             {
             }
         }
