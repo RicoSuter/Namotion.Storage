@@ -6,7 +6,7 @@
 
 The Namotion.Storage .NET libraries provide abstractions and implementations for storage service like blob storages or file systems.
 
-By programming against a messaging abstraction you enable the following scenarios: 
+By programming against a storage abstraction you enable the following scenarios: 
 
 - Build **multi-cloud capable applications** by being able to change storage technologies on demand. 
 - Quickly **switch to different storage technologies** to find the best technological fit for your applications. 
@@ -29,18 +29,18 @@ TBD.
 
 **Blobs**
 
-Inject `IBlobStorage` or `IBlobContainer` but do net get a container from a storage (violates [SRP](http://software-pattern.org/single-responsibility-principle)).
+Inject `IBlobStorage` or `IBlobContainer` but do not get a container from a blob storage in the consuming class (violates [SRP](http://software-pattern.org/single-responsibility-principle)).
 
 - **IBlobStorage**: A blob storage where blobs are stored in a container and cannot be directly stored. Only `containerName/blobName` or `containerName/subDirectories/blobName` are allowed.
 - **IBlobContainer\<T>**
 - **IBlobContainer**: A blob container where blobs can be directly stored or in a subdirectory. A container acts like a simple/basic virtual file system.
     - `OpenWriteAsync`: Creates or overrides an existing blob
     - `OpenAppendAsync`: Creates or appends to an existing blob
-	- `OpenReadAsync`
-	- `ExistsAsync`
-	- `GetAsync`
-	- `ListAsync`
-	- `DeleteAsync`: Deletes a blob
+    - `OpenReadAsync`
+    - `ExistsAsync`
+    - `GetAsync`
+    - `ListAsync`
+    - `DeleteAsync`: Deletes a blob
 - **BlobElement**: Metadata and properties of a blob or container.
 
 Internal: 
