@@ -43,16 +43,6 @@ namespace Namotion.Storage.Azure.Storage.Blob
             }
         }
 
-        private async Task<CloudBlockBlob> GetBlobReferenceAsync(string path, CancellationToken cancellationToken)
-        {
-            var pathSegments = PathUtilities.GetSegments(path);
-            var containerName = pathSegments.First();
-            var blobName = string.Join(PathUtilities.Delimiter, pathSegments.Skip(1));
-
-            var container = await GetCloudBlobContainerAsync(containerName, cancellationToken).ConfigureAwait(false);
-            return container.GetBlockBlobReference(blobName);
-        }
-
         public async Task<Stream> OpenReadAsync(string path, CancellationToken cancellationToken = default)
         {
             try
@@ -165,6 +155,16 @@ namespace Namotion.Storage.Azure.Storage.Blob
 
         public void Dispose()
         {
+        }
+
+        private async Task<CloudBlockBlob> GetBlobReferenceAsync(string path, CancellationToken cancellationToken)
+        {
+            var pathSegments = PathUtilities.GetSegments(path);
+            var containerName = pathSegments.First();
+            var blobName = string.Join(PathUtilities.Delimiter, pathSegments.Skip(1));
+
+            var container = await GetCloudBlobContainerAsync(containerName, cancellationToken).ConfigureAwait(false);
+            return container.GetBlockBlobReference(blobName);
         }
 
         private async Task<CloudBlobContainer> GetCloudBlobContainerAsync(string containerName, CancellationToken cancellationToken)
