@@ -179,6 +179,35 @@ namespace Namotion.Storage.Tests
         }
 
         [Fact]
+        public async Task WhenWritingIntoObjectStorage_ThenObjectIsAvailable()
+        {
+            // Arrange
+            var config = GetConfiguration();
+            using (var container = GetBlobContainer(CreateBlobStorage(config)))
+            {
+                var objectStorage = container.CreateJsonObjectStorage<string>();
+
+                var id = Guid.NewGuid().ToString();
+                var content = Guid.NewGuid().ToString();
+
+                try
+                {
+                    await objectStorage.WriteAsync(id, content);
+
+                    // Act
+                    var result = await objectStorage.ReadAsync(id);
+
+                    // Assert
+                    Assert.Equal(content, result);
+                }
+                finally
+                {
+                    await objectStorage.DeleteAsync(id);
+                }
+            }
+        }
+
+        [Fact]
         public async Task WhenNestedBlobIsCreated_ThenListingWorksAsExpected()
         {
             // Arrange

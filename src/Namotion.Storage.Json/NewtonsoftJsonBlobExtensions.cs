@@ -1,4 +1,5 @@
 ﻿using Namotion.Storage.Abstractions;
+using Namotion.Storage.Json;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.IO;
@@ -15,6 +16,17 @@ namespace Namotion.Storage
         };
 
         private static readonly JsonSerializer _serializer = JsonSerializer.Create(_serializerSettings);
+
+        /// <summary>
+        /// Creates an <see cref="IObjectStorage{T}"/> where object values are stored in a <see cref="IBlobContainer"/>.
+        /// </summary>
+        /// <typeparam name="T">The object value type.</typeparam>
+        /// <param name="blobContainer">The blob container.</param>
+        /// <returns>The object storage.</returns>
+        public static IObjectStorage<T> CreateJsonObjectStorage<T>(this IBlobContainer blobContainer)
+        {
+            return new JsonObjectStorage<T>(blobContainer);
+        }
 
         public static Task WriteAsJsonAsync<T>(this IBlobContainer<T> writer, string path, T value, CancellationToken cancellationToken = default)
         {

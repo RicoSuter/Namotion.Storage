@@ -50,14 +50,22 @@ Internal:
 
 The idea behind the generic interfaces is to allow multiple instance registrations, read [Dependency Injection in .NET: A way to work around missing named registrations](https://blog.rsuter.com/dotnet-dependency-injection-way-to-work-around-missing-named-registrations/) for more information.
 
+**Objects**
+
+- **IObjectStorage\<T>**
+    - `WriteAsync(id, value)`
+    - `ReadAsync(id)`
+    - `DeleteAsync(id)`
+
 ### Namotion.Storage.Json
 
 [![Nuget](https://img.shields.io/nuget/v/Namotion.Storage.Json.svg)](https://www.nuget.org/packages/Namotion.Storage.Json/)
 
 Extension methods:
 
-- WriteAsJson
-- ReadAsJson
+- `WriteAsJson()`: Writes an object as JSON into a blob container/storage.
+- `ReadAsJson()`: Reads an object as JSON from a blob container/storage.
+- `CreateJsonObjectStorage<T>()`: Creates an `IObjectStorage<T>` for a given `IBlobContainer`. Usage: `var objectStorage = blobContainer.CreateJsonObjectStorage<Person>()`.
 
 ## Implementation packages
 
