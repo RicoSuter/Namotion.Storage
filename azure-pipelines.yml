@@ -58,6 +58,7 @@ steps:
     arguments: '--configuration $(BuildConfiguration) --collect:"Code Coverage"'
     feedsToUse: 'select'
     versioningScheme: 'off'
+    publishTestResults: true
   env:
     AzureBlobStorageConnectionString: $(AzureBlobStorageConnectionString)
     FtpPassword: $(FtpPassword)
