@@ -19,7 +19,7 @@ namespace Namotion.Storage
             return new BlobStorageToContainerAdapter(storage, path);
         }
 
-        public static IBlobStorage WithBlobType<T>(this IBlobStorage blobStorage)
+        public static IBlobStorage<T> WithBlobType<T>(this IBlobStorage blobStorage)
         {
             return new BlobStorage<T>(blobStorage);
         }
