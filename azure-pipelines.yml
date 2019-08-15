@@ -55,7 +55,7 @@ steps:
   inputs:
     command: 'test'
     projects: '$(Projects)'
-    arguments: '--configuration $(BuildConfiguration) --collect "Code Coverage" --settings "CodeCoverage.runsettings"'
+    arguments: '--configuration $(BuildConfiguration) --collect "Code Coverage" --settings "src/CodeCoverage.runsettings"'
     publishTestResults: true
     feedsToUse: 'select'
     versioningScheme: 'off'
