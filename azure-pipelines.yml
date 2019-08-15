@@ -55,10 +55,10 @@ steps:
   inputs:
     command: 'test'
     projects: '$(Projects)'
-    arguments: '--configuration $(BuildConfiguration) --collect:"Code Coverage"'
+    arguments: '--configuration $(BuildConfiguration) --collect "Code Coverage"'
+    publishTestResults: true
     feedsToUse: 'select'
     versioningScheme: 'off'
-    publishTestResults: true
   env:
     AzureBlobStorageConnectionString: $(AzureBlobStorageConnectionString)
     FtpPassword: $(FtpPassword)
