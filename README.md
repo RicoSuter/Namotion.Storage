@@ -1,6 +1,7 @@
 # Namotion.Storage
 
 [![Azure DevOps](https://img.shields.io/azure-devops/build/rsuter/Namotion/20/master.svg)](https://dev.azure.com/rsuter/Namotion/_build?definitionId=20)
+[![Azure DevOps](https://img.shields.io/azure-devops/coverage/rsuter/Namotion/20/master.svg)](https://dev.azure.com/rsuter/Namotion/_build?definitionId=20)
 
 <img align="left" src="https://raw.githubusercontent.com/RicoSuter/Namotion.Reflection/master/assets/Icon.png" width="48px" height="48px">
 
