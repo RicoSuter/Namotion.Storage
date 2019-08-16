@@ -24,7 +24,7 @@ IBlobContainer container = storage.GetContainer("MyContainer");
 IBlobContainer<Person> typedContainer = container.WithBlobType<Person>();
 
 await container.WriteAsJsonAsync("MyPath", new Person { ... });
-var person = await container.ReadAsJsonAsync<string>("MyPath");
+var person = await container.ReadAsJsonAsync("MyPath");
 ```
 
 In your business service classes you should then only use the abstraction interfaces like `IBlobContainer` or `IObjectStorage`, etc.
