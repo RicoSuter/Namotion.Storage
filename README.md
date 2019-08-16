@@ -18,13 +18,13 @@ By programming against a storage abstraction you enable the following scenarios:
 
 In your application root create an `IBlobStorage` instance with an actual implementation package and retrieve a blob container: 
 
-```
+```csharp
 var storage = AzureBlobStorage.CreateFromConnectionString("MyConnectionString");
 IBlobContainer container = storage.GetContainer("MyContainer");
 IBlobContainer<Person> typedContainer = container.WithBlobType<Person>();
 
-await container.WriteAsJsonAsync("MyPath", new Person { ... });
-var person = await container.ReadAsJsonAsync("MyPath");
+await typedContainer.WriteAsJsonAsync("MyPath", new Person { ... });
+var person = await typedContainer.ReadAsJsonAsync("MyPath");
 ```
 
 In your business service classes you should then only use the abstraction interfaces like `IBlobContainer` or `IObjectStorage`, etc.
