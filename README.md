@@ -5,7 +5,7 @@
 
 <img align="left" src="https://raw.githubusercontent.com/RicoSuter/Namotion.Reflection/master/assets/Icon.png" width="48px" height="48px">
 
-The Namotion.Storage .NET libraries provide abstractions and implementations for storage service like blob storages or file systems.
+The Namotion.Storage .NET libraries provide abstractions and implementations for storage services like blob storages, file systems or object storages.
 
 By programming against a storage abstraction you enable the following scenarios: 
 
@@ -16,7 +16,7 @@ By programming against a storage abstraction you enable the following scenarios:
 
 ## Usage
 
-In your application root create an `IBlobStorage` instance with an actual implementation package and retrieve a blob container: 
+In your application root, create an `IBlobStorage` instance with an actual implementation package and retrieve a blob container: 
 
 ```csharp
 var storage = AzureBlobStorage.CreateFromConnectionString("MyConnectionString");
