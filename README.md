@@ -8,7 +8,7 @@ Storage | [Messaging](https://github.com/RicoSuter/Namotion.Messaging) | [Reflec
 <img align="left" src="https://raw.githubusercontent.com/RicoSuter/Namotion.Reflection/master/assets/Icon.png" width="48px" height="48px">
 
 The Namotion.Storage .NET libraries provide abstractions and implementations for storage services like blob storages, file systems or object storages.
-
+ 
 By programming against a storage abstraction you enable the following scenarios: 
 
 - Build **multi-cloud capable applications** by being able to change storage technologies on demand. 
