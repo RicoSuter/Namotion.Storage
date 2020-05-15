@@ -10,12 +10,12 @@ namespace Namotion.Storage
 
         public static string[] GetSegments(string path)
         {
-            return path
+            return path?
                 .Replace('\\', '/')
                 .Trim(DelimiterChar)
                 .Split(DelimiterChar)
                 .Where(s => !string.IsNullOrWhiteSpace(s))
-                .ToArray();
+                .ToArray() ?? new string[0];
         }
     }
 }
