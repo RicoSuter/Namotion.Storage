@@ -11,8 +11,9 @@ namespace Namotion.Storage
         public static string[] GetSegments(string path)
         {
             return path
-                .Trim('/')
-                .Split('/')
+                .Replace('\\', '/')
+                .Trim(DelimiterChar)
+                .Split(DelimiterChar)
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .ToArray();
         }
