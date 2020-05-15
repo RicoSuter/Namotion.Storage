@@ -157,7 +157,7 @@ namespace Namotion.Storage.Tests
             // Arrange
             var config = GetConfiguration();
             using (var container = GetBlobContainer(CreateBlobStorage(config))
-                .WithBlobType<string>())
+                .AsContainer<string>())
             {
                 var path = Guid.NewGuid().ToString();
                 var content = Guid.NewGuid().ToString();

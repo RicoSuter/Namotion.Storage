@@ -1,11 +1,14 @@
 # Namotion.Storage
 
-[![Azure DevOps](https://img.shields.io/azure-devops/build/rsuter/Namotion/20/master.svg)](https://dev.azure.com/rsuter/Namotion/_build?definitionId=20)
+Storage | [Messaging](https://github.com/RicoSuter/Namotion.Messaging) | [Reflection](https://github.com/RicoSuter/Namotion.Reflection)
+
+[![Azure DevOps](https://img.shields.io/azure-devops/build/rsuter/9023bd0a-b641-4e30-9c0f-a7c15e1e080e/20/master.svg)](https://dev.azure.com/rsuter/Namotion/_build?definitionId=20)
+[![Azure DevOps](https://img.shields.io/azure-devops/coverage/rsuter/9023bd0a-b641-4e30-9c0f-a7c15e1e080e/20/master.svg)](https://dev.azure.com/rsuter/Namotion/_build?definitionId=20)
 
 <img align="left" src="https://raw.githubusercontent.com/RicoSuter/Namotion.Reflection/master/assets/Icon.png" width="48px" height="48px">
 
-The Namotion.Storage .NET libraries provide abstractions and implementations for storage service like blob storages or file systems.
-
+The Namotion.Storage .NET libraries provide abstractions and implementations for storage services like blob storages, file systems or object storages.
+ 
 By programming against a storage abstraction you enable the following scenarios: 
 
 - Build **multi-cloud capable applications** by being able to change storage technologies on demand. 
@@ -15,11 +18,18 @@ By programming against a storage abstraction you enable the following scenarios:
 
 ## Usage
 
-TBD.
+In your application root, create an `IBlobStorage` instance with an actual implementation package and retrieve a blob container: 
 
-## Extensions
+```csharp
+var storage = AzureBlobStorage.CreateFromConnectionString("MyConnectionString");
+IBlobContainer container = storage.GetContainer("MyContainer");
+IBlobContainer<Person> typedContainer = container.WithBlobType<Person>();
 
-TBD.
+await typedContainer.WriteAsJsonAsync("MyPath", new Person { ... });
+var person = await typedContainer.ReadAsJsonAsync("MyPath");
+```
+
+In your business service classes you should then only use the abstraction interfaces like `IBlobContainer` or `IObjectStorage`, etc.
 
 ## Core packages
 
