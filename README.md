@@ -90,6 +90,10 @@ Implementations:
 - FileSystemBlobStorage
 - InMemoryBlobStorage
 
+Extensions:
+
+- `WithBlobType\<T>`: Adds a blob type to an `IBlobStorage/IBlobContainer` and transforms it into a `IBlobStorage<T>/IBlobContainer<T>`.
+
 ### Namotion.Storage.Azure.Storage.Blob
 
 [![Nuget](https://img.shields.io/nuget/v/Namotion.Storage.Azure.Storage.Blob.svg)](https://www.nuget.org/packages/Namotion.Storage.Azure.Storage.Blob/)
