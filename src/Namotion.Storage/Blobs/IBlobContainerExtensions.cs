@@ -1,6 +1,4 @@
-﻿using Namotion.Storage.Abstractions;
-
-namespace Namotion.Storage
+﻿namespace Namotion.Storage
 {
     public static class IBlobContainerExtensions
     {

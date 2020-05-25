@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Namotion.Storage.Abstractions;
 
 namespace Namotion.Storage.Tests.Blobs
 {

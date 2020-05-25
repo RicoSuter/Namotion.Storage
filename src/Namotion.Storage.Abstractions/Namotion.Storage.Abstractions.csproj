@@ -12,5 +12,6 @@
     <PackageProjectUrl>https://github.com/RicoSuter/Namotion.Storage</PackageProjectUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <WarningsAsErrors>true</WarningsAsErrors>
+    <RootNamespace>Namotion.Storage</RootNamespace>
   </PropertyGroup>
 </Project>

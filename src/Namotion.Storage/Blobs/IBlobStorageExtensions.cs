@@ -1,6 +1,4 @@
-﻿using Namotion.Storage.Abstractions;
-
-namespace Namotion.Storage
+﻿namespace Namotion.Storage
 {
     /// <summary>
     /// Container based blob storage extension methods.

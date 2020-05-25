@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Namotion.Storage.Abstractions
+namespace Namotion.Storage
 {
     /// <summary>
     /// Thrown when the blob does not exist.

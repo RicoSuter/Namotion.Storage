@@ -1,4 +1,4 @@
-﻿namespace Namotion.Storage.Abstractions
+﻿namespace Namotion.Storage
 {
     /// <summary>
     /// The blob entry types.

@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Namotion.Storage.Abstractions
+namespace Namotion.Storage
 {
     public static class IBlobReaderExtensions
     {

@@ -1,6 +1,5 @@
 ﻿using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
-using Namotion.Storage.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.IO;

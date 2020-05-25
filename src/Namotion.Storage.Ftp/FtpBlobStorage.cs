@@ -5,7 +5,6 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentFTP;
-using Namotion.Storage.Abstractions;
 
 namespace Namotion.Storage.Ftp
 {
