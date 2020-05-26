@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Namotion.Storage.Abstractions;
 using Namotion.Storage.Azure.Storage.Blob;
 using System.Threading.Tasks;
 using Xunit;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Namotion.Storage.Abstractions
+namespace Namotion.Storage
 {
     public class BlobElement
     {

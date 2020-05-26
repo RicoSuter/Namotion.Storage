@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Namotion.Storage.Abstractions
+namespace Namotion.Storage
 {
     public interface IBlobContainer<T> : IBlobContainer { }
 

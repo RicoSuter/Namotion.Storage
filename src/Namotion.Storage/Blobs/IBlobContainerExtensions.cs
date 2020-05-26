@@ -1,6 +1,4 @@
-﻿using Namotion.Storage.Abstractions;
-
-namespace Namotion.Storage
+﻿namespace Namotion.Storage
 {
     public static class IBlobContainerExtensions
     {
@@ -10,7 +8,7 @@ namespace Namotion.Storage
         /// <typeparam name="T">The blob type.</typeparam>
         /// <param name="blobContainer">The blob container.</param>
         /// <returns>The wrapped blob container.</returns>
-        public static IBlobContainer<T> AsContainer<T>(this IBlobContainer blobContainer)
+        public static IBlobContainer<T> WithBlobType<T>(this IBlobContainer blobContainer)
         {
             return new BlobContainer<T>(blobContainer);
         }

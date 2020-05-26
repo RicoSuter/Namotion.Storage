@@ -1,5 +1,4 @@
-﻿using Namotion.Storage.Abstractions;
-using Namotion.Storage.Json;
+﻿using Namotion.Storage.Json;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.IO;

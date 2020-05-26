@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Namotion.Storage.Abstractions
+namespace Namotion.Storage
 {
     public interface IBlobReader
     {

@@ -1,5 +1,4 @@
-﻿using Namotion.Storage.Abstractions;
-using Namotion.Storage.Azure.Storage.Blob;
+﻿using Namotion.Storage.Azure.Storage.Blob;
 using System;
 using System.Threading.Tasks;
 
@@ -21,13 +20,13 @@ namespace Namotion.Storage.Demo
             // Check existing
             if (await container.ExistsAsync("abc2"))
             {
-                var output2 = await container.ReadAsStringAsync("abc2");
+                var output2 = await container.ReadAllTextAsync("abc2");
                 Console.WriteLine("Output: " + output2);
             }
 
             // Write & read string
-            await container.WriteStringAsync("abc", "Hello world! " + DateTimeOffset.Now);
-            var output = await container.ReadAsStringAsync("abc");
+            await container.WriteAllTextAsync("abc", "Hello world! " + DateTimeOffset.Now);
+            var output = await container.ReadAllTextAsync("abc");
             Console.WriteLine("Output: " + output);
 
             var items = await container.ListAsync();
