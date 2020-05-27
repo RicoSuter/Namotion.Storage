@@ -38,8 +38,8 @@ namespace Namotion.Storage.Demo
                 LastName = "Suter"
             };
 
-            await container.WriteAsJsonAsync("person", inputPerson);
-            var outputPerson = await container.ReadAsJsonAsync<dynamic>("person");
+            await container.WriteJsonAsync("person", inputPerson);
+            var outputPerson = await container.ReadJsonAsync<dynamic>("person");
 
             Console.WriteLine("Firstname: " + outputPerson.firstName);
             Console.WriteLine("Lastname: " + outputPerson.lastName);
