@@ -16,6 +16,11 @@ namespace Namotion.Storage
             _blobs = blobs ?? new Dictionary<string, byte[]>();
         }
 
+        public static IBlobStorage Create(IDictionary<string, byte[]> blobs = null)
+        {
+            return new InMemoryBlobStorage(blobs);
+        }
+
         public Task<BlobElement> GetAsync(string path, CancellationToken cancellationToken)
         {
             lock (_lock)
@@ -78,12 +83,17 @@ namespace Namotion.Storage
             }
         }
 
-        public void Dispose()
+        public void Clear()
         {
             lock (_lock)
             {
                 _blobs.Clear();
             }
+        }
+
+        public void Dispose()
+        {
+            Clear();
         }
 
         public Task<BlobElement[]> ListAsync(string path, CancellationToken cancellationToken = default)

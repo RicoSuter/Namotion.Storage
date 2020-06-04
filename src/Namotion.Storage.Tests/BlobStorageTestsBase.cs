@@ -164,8 +164,8 @@ namespace Namotion.Storage.Tests
                 try
                 {
                     // Act
-                    await container.WriteAsJsonAsync(path, content);
-                    var result = await container.ReadAsJsonAsync<string>(path);
+                    await container.WriteJsonAsync(path, content);
+                    var result = await container.ReadJsonAsync<string>(path);
 
                     // Assert
                     Assert.Equal(content, result);
@@ -220,7 +220,7 @@ namespace Namotion.Storage.Tests
 
                 try
                 {
-                    await container.WriteAsJsonAsync(path, content);
+                    await container.WriteJsonAsync(path, content);
 
                     // Act
                     var containers = await storage.ListAsync();
