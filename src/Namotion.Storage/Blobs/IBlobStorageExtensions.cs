@@ -1,4 +1,6 @@
-﻿namespace Namotion.Storage
+﻿using System;
+
+namespace Namotion.Storage
 {
     /// <summary>
     /// Container based blob storage extension methods.
@@ -26,6 +28,29 @@
         public static IBlobStorage<T> WithBlobType<T>(this IBlobStorage blobStorage)
         {
             return new BlobStorage<T>(blobStorage);
+        }
+
+        /// <summary>
+        /// Adds an interceptor to the blob storage.
+        /// </summary>
+        /// <param name="blobStorage">The blob storage.</param>
+        /// <param name="func">The function to create a wrapper around the blob storage.</param>
+        /// <returns>The wrapped blob storage.</returns>
+        public static IBlobStorage Wrap(this IBlobStorage blobStorage, Func<IBlobStorage, IBlobStorage> func)
+        {
+            return func(blobStorage);
+        }
+
+        /// <summary>
+        /// Adds an interceptor to the blob storage.
+        /// </summary>
+        /// <typeparam name="T">The blob type.</typeparam>
+        /// <param name="blobStorage">The blob storage.</param>
+        /// <param name="func">The function to create a wrapper around the blob storage.</param>
+        /// <returns>The wrapped blob storage.</returns>
+        public static IBlobStorage<T> Wrap<T>(this IBlobStorage<T> blobStorage, Func<IBlobStorage<T>, IBlobStorage<T>> func)
+        {
+            return func(blobStorage);
         }
     }
 }
