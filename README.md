@@ -92,7 +92,8 @@ Implementations:
 
 Extensions:
 
-- `WithBlobType\<T>`: Adds a blob type to an `IBlobStorage/IBlobContainer` and transforms it into a `IBlobStorage<T>/IBlobContainer<T>`.
+- `WithBlobType<T>()`: Adds a blob type to an `IBlobStorage/IBlobContainer` and transforms it into a `IBlobStorage<T>/IBlobContainer<T>`.
+- `Wrap<T>()/Wrap()`: Adds an interceptor to the blob storage (`blobStorage.Wrap(s => new MyInterceptor(s))`). An interceptor can be implemented as a new class inheriting from the `BlobStorage` class and overriding some methods.
 
 ### Namotion.Storage.Azure.Storage.Blob
 

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <Version>0.5.3</Version>
+    <Version>0.6.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Company>Namotion</Company>
     <Authors>Rico Suter</Authors>
@@ -16,6 +16,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Namotion.Storage.Abstractions\Namotion.Storage.Abstractions.csproj" />
     <ProjectReference Include="..\Namotion.Storage\Namotion.Storage.csproj" />
-    <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="9.4.2" />
+    <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="11.1.7" />
   </ItemGroup>
 </Project>
