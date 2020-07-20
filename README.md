@@ -36,6 +36,7 @@ In your business service classes you should then only use the abstraction interf
 ### Namotion.Storage.Abstractions
 
 [![Nuget](https://img.shields.io/nuget/v/Namotion.Storage.Abstractions.svg)](https://www.nuget.org/packages/Namotion.Storage.Abstractions/)
+[![Apimundo](https://img.shields.io/badge/Namotion.Storage.Abstractions%20API-Apimundo-728199.svg)](https://apimundo.com/organizations/nuget-org/nuget-feeds/public/packages/Namotion.Storage.Abstractions/versions/latest?tab=types)
 
 **Blobs**
 
@@ -70,6 +71,7 @@ The idea behind the generic interfaces is to allow multiple instance registratio
 ### Namotion.Storage.Json
 
 [![Nuget](https://img.shields.io/nuget/v/Namotion.Storage.Json.svg)](https://www.nuget.org/packages/Namotion.Storage.Json/)
+[![Apimundo](https://img.shields.io/badge/Namotion.Storage.Json%20API-Apimundo-728199.svg)](https://apimundo.com/organizations/nuget-org/nuget-feeds/public/packages/Namotion.Storage.Json/versions/latest?tab=types)
 
 Extension methods:
 
@@ -84,6 +86,7 @@ The following packages should only be used in the head project, i.e. directly in
 ### Namotion.Storage
 
 [![Nuget](https://img.shields.io/nuget/v/Namotion.Storage.svg)](https://www.nuget.org/packages/Namotion.Storage/)
+[![Apimundo](https://img.shields.io/badge/Namotion.Storage%20API-Apimundo-728199.svg)](https://apimundo.com/organizations/nuget-org/nuget-feeds/public/packages/Namotion.Storage/versions/latest?tab=types)
 
 Implementations:
 
@@ -98,6 +101,7 @@ Extensions:
 ### Namotion.Storage.Azure.Storage.Blob
 
 [![Nuget](https://img.shields.io/nuget/v/Namotion.Storage.Azure.Storage.Blob.svg)](https://www.nuget.org/packages/Namotion.Storage.Azure.Storage.Blob/)
+[![Apimundo](https://img.shields.io/badge/Namotion.Storage.Azure.Storage.Blob%20API-Apimundo-728199.svg)](https://apimundo.com/organizations/nuget-org/nuget-feeds/public/packages/Namotion.Storage.Azure.Storage.Blob/versions/latest?tab=types)
 
 Implementations:
 
@@ -106,6 +110,7 @@ Implementations:
 ### Namotion.Storage.Ftp
 
 [![Nuget](https://img.shields.io/nuget/v/Namotion.Storage.Ftp.svg)](https://www.nuget.org/packages/Namotion.Storage.Ftp.Blob/)
+[![Apimundo](https://img.shields.io/badge/Namotion.Storage.Ftp%20API-Apimundo-728199.svg)](https://apimundo.com/organizations/nuget-org/nuget-feeds/public/packages/Namotion.Storage.Ftp/versions/latest?tab=types)
 
 Implementations:
 
