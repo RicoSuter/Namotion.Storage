@@ -76,6 +76,12 @@ namespace Namotion.Storage
             try
             {
                 var fullPath = GetFullPath(path);
+                var directory = Path.GetDirectoryName(fullPath);
+                if (!Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+
                 return Task.FromResult<Stream>(File.Open(fullPath, FileMode.Append, FileAccess.Write));
             }
             catch (FileNotFoundException e)
