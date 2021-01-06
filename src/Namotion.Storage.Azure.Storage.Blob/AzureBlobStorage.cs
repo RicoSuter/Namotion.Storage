@@ -36,7 +36,7 @@ namespace Namotion.Storage.Azure.Storage.Blob
                     blob.Properties.LastModified,
                     blob.Properties.ETag);
             }
-            catch (StorageException e) when (e.Message.Contains("does not exist."))
+            catch (StorageException e) when (e.RequestInformation?.HttpStatusCode == 404)
             {
                 throw new BlobNotFoundException(path, e);
             }
@@ -49,7 +49,7 @@ namespace Namotion.Storage.Azure.Storage.Blob
                 var blob = await GetBlobReferenceAsync(path, cancellationToken).ConfigureAwait(false);
                 return await blob.OpenReadAsync(cancellationToken).ConfigureAwait(false);
             }
-            catch (StorageException e) when (e.Message.Contains("does not exist."))
+            catch (StorageException e) when (e.RequestInformation?.HttpStatusCode == 404)
             {
                 throw new BlobNotFoundException(path, e);
             }
@@ -79,7 +79,7 @@ namespace Namotion.Storage.Azure.Storage.Blob
                 var blob = await GetBlobReferenceAsync(path, cancellationToken).ConfigureAwait(false);
                 await blob.DeleteAsync(cancellationToken).ConfigureAwait(false);
             }
-            catch (StorageException e) when (e.Message.Contains("does not exist."))
+            catch (StorageException e) when (e.RequestInformation?.HttpStatusCode == 404)
             {
             }
         }

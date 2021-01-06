@@ -76,6 +76,12 @@ namespace Namotion.Storage
             try
             {
                 var fullPath = GetFullPath(path);
+                var directory = Path.GetDirectoryName(fullPath);
+                if (!Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+
                 return Task.FromResult<Stream>(File.Open(fullPath, FileMode.Append, FileAccess.Write));
             }
             catch (FileNotFoundException e)
@@ -97,7 +103,7 @@ namespace Namotion.Storage
                 Directory.CreateDirectory(directory);
             }
 
-            return Task.FromResult<Stream>(File.OpenWrite(fullPath));
+            return Task.FromResult<Stream>(File.Open(fullPath, FileMode.Create, FileAccess.Write));
         }
 
         public Task DeleteAsync(string path, CancellationToken cancellationToken = default)
@@ -124,7 +130,7 @@ namespace Namotion.Storage
             catch (DirectoryNotFoundException e)
             {
                 throw new ContainerNotFoundException(path, e);
-            }           
+            }
         }
 
         public void Dispose()
