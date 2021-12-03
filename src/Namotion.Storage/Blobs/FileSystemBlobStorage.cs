@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -52,6 +53,11 @@ namespace Namotion.Storage
             {
                 throw new BlobNotFoundException(path, e);
             }
+        }
+
+        public Task UpdateMetadataAsync(string path, IDictionary<string, string> metadata, CancellationToken cancellationToken = default)
+        {
+            throw new System.NotImplementedException();
         }
 
         public Task<Stream> OpenReadAsync(string path, CancellationToken cancellationToken = default)

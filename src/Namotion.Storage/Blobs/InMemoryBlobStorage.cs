@@ -8,12 +8,15 @@ namespace Namotion.Storage
 {
     public class InMemoryBlobStorage : IBlobStorage
     {
-        private readonly IDictionary<string, byte[]> _blobs;
+        private readonly IDictionary<string, (byte[], IDictionary<string, string>)> _blobs;
         private readonly object _lock = new object();
 
         public InMemoryBlobStorage(IDictionary<string, byte[]> blobs = null)
         {
-            _blobs = blobs ?? new Dictionary<string, byte[]>();
+            _blobs = blobs?.ToDictionary(
+                p => p.Key, 
+                p => (p.Value, (IDictionary<string, string>)new Dictionary<string, string>())) 
+                    ?? new Dictionary<string, (byte[], IDictionary<string, string>)>();
         }
 
         public static IBlobStorage Create(IDictionary<string, byte[]> blobs = null)
@@ -30,7 +33,7 @@ namespace Namotion.Storage
                     throw new BlobNotFoundException(path, null);
                 }
 
-                return Task.FromResult(new BlobElement(path, null, BlobElementType.Blob, _blobs[path].LongLength));
+                return Task.FromResult(new BlobElement(path, null, BlobElementType.Blob, _blobs[path].Item1.LongLength, metadata: _blobs[path].Item2));
             }
         }
 
@@ -39,6 +42,15 @@ namespace Namotion.Storage
             lock (_lock)
             {
                 return Task.FromResult(_blobs.ContainsKey(path));
+            }
+        }
+
+        public Task UpdateMetadataAsync(string path, IDictionary<string, string> metadata, CancellationToken cancellationToken = default)
+        {
+            lock (_lock)
+            {
+                _blobs[path] = (_blobs[path].Item1, metadata);
+                return Task.CompletedTask;
             }
         }
 
@@ -51,7 +63,7 @@ namespace Namotion.Storage
                     throw new BlobNotFoundException(path, null);
                 }
 
-                return Task.FromResult<Stream>(new MemoryStream(_blobs[path].ToArray())
+                return Task.FromResult<Stream>(new MemoryStream(_blobs[path].Item1.ToArray())
                 {
                     Position = 0
                 });
@@ -66,7 +78,7 @@ namespace Namotion.Storage
         public Task<Stream> OpenAppendAsync(string path, CancellationToken cancellationToken = default)
         {
             var stream = new InternalMemoryStream(this, path);
-            stream.Write(_blobs[path], 0, _blobs[path].Length);
+            stream.Write(_blobs[path].Item1, 0, _blobs[path].Item1.Length);
             return Task.FromResult<Stream>(stream);
         }
 
@@ -153,7 +165,7 @@ namespace Namotion.Storage
             {
                 lock (_storage._lock)
                 {
-                    _storage._blobs[_identifier] = ToArray();
+                    _storage._blobs[_identifier] = (ToArray(), new Dictionary<string, string>());
                 }
 
                 base.Dispose(disposing);

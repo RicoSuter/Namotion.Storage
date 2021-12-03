@@ -18,5 +18,11 @@ namespace Namotion.Storage.Tests.Blobs
         {
             return Task.CompletedTask;
         }
+
+        [Fact(Skip = "FTP does not support metadata.")]
+        public override Task WhenUpdatingMetdata_ThenMetadataIsStored()
+        {
+            return Task.CompletedTask;
+        }
     }
 }

@@ -34,7 +34,28 @@ namespace Namotion.Storage.Azure.Storage.Blob
                     blob.Properties.Length,
                     blob.Properties.Created,
                     blob.Properties.LastModified,
-                    blob.Properties.ETag);
+                    blob.Properties.ETag,
+                    blob.Metadata);
+            }
+            catch (StorageException e) when (e.RequestInformation?.HttpStatusCode == 404)
+            {
+                throw new BlobNotFoundException(path, e);
+            }
+        }
+
+        public async Task UpdateMetadataAsync(string path, IDictionary<string, string> metadata, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var blob = await GetBlobReferenceAsync(path, cancellationToken).ConfigureAwait(false);
+
+                blob.Metadata.Clear();
+                foreach (var pair in metadata)
+                {
+                    blob.Metadata[pair.Key] = pair.Value;
+                }
+
+                await blob.SetMetadataAsync(cancellationToken).ConfigureAwait(false);
             }
             catch (StorageException e) when (e.RequestInformation?.HttpStatusCode == 404)
             {
