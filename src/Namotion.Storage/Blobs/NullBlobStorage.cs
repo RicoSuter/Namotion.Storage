@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,6 +8,11 @@ namespace Namotion.Storage
     public class NullBlobStorage : IBlobStorage
     {
         public Task DeleteAsync(string path, CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task UpdateMetadataAsync(string path, IDictionary<string, string> metadata, CancellationToken cancellationToken = default)
         {
             return Task.CompletedTask;
         }

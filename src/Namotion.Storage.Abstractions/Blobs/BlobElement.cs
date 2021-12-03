@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Namotion.Storage
@@ -11,7 +12,8 @@ namespace Namotion.Storage
             long? length = null,
             DateTimeOffset? created = null,
             DateTimeOffset? lastModified = null,
-            string eTag = null)
+            string eTag = null,
+            IDictionary<string, string> metadata = null)
         {
             Id = id;
             Name = name ?? id.Split('/').Last();
@@ -20,6 +22,7 @@ namespace Namotion.Storage
             Created = created;
             LastModified = lastModified;
             ETag = eTag;
+            Metadata = metadata;
         }
 
         public static BlobElement CreateBlob(string id, string name)
@@ -71,5 +74,10 @@ namespace Namotion.Storage
         /// Gets the blob ETag.
         /// </summary>
         public string ETag { get; }
+
+        /// <summary>
+        /// Gets the blob metadata.
+        /// </summary>
+        public IDictionary<string, string> Metadata { get; }
     }
 }

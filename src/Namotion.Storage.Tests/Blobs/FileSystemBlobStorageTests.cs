@@ -7,6 +7,12 @@ namespace Namotion.Storage.Tests.Blobs
 {
     public class FileSystemBlobStorageTests : BlobStorageTestsBase
     {
+        [Fact(Skip = "File system does not support metadata.")]
+        public override Task WhenUpdatingMetdata_ThenMetadataIsStored()
+        {
+            return Task.CompletedTask;
+        }
+
         public override async Task<BlobElement> WhenWritingBlob_ThenElementPropertiesAreAvailable()
         {
             var properties = await base.WhenWritingBlob_ThenElementPropertiesAreAvailable();

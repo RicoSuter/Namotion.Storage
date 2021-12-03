@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +8,15 @@ namespace Namotion.Storage
 {
     public interface IBlobWriter
     {
+        /// <summary>
+        /// Updates the metadata of a blob.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="metadata"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task UpdateMetadataAsync(string path, IDictionary<string, string> metadata, CancellationToken cancellationToken = default);
+
         /// <summary>
         /// Opens a stream to create or overwrite an entire blob.
         /// </summary>

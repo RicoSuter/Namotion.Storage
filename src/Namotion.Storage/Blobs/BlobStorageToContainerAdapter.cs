@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,6 +19,11 @@ namespace Namotion.Storage
         public Task<BlobElement> GetAsync(string path, CancellationToken cancellationToken)
         {
             return _storage.GetAsync(_containerName + "/" + path, cancellationToken);
+        }
+
+        public Task UpdateMetadataAsync(string path, IDictionary<string, string> metadata, CancellationToken cancellationToken = default)
+        {
+            return _storage.UpdateMetadataAsync(_containerName + "/" + path, metadata, cancellationToken);
         }
 
         public Task<bool> ExistsAsync(string path, CancellationToken cancellationToken = default)

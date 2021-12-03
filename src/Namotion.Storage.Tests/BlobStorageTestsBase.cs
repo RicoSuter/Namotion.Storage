@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 
 namespace Namotion.Storage.Tests
 {
@@ -61,6 +62,34 @@ namespace Namotion.Storage.Tests
                     // Assert
                     Assert.True(element.Length > 0);
                     return element;
+                }
+                finally
+                {
+                    await container.DeleteAsync(path);
+                }
+            }
+        }
+
+        [Fact]
+        public virtual async Task WhenUpdatingMetdata_ThenMetadataIsStored()
+        {
+            // Arrange
+            var config = GetConfiguration();
+            using (var container = GetBlobContainer(CreateBlobStorage(config)))
+            {
+                var path = Guid.NewGuid().ToString();
+
+                try
+                {
+                    await container.WriteAllTextAsync(path, "Hello world!");
+                    var element = await container.GetAsync(path);
+
+                    // Act
+                    await container.UpdateMetadataAsync(path, new Dictionary<string, string> { { "foo", "bar"} });
+
+                    // Assert
+                    var updatedElement = await container.GetAsync(path);
+                    Assert.Equal("bar", updatedElement.Metadata["foo"]);
                 }
                 finally
                 {

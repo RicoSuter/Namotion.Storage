@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -143,6 +144,11 @@ namespace Namotion.Storage.Ftp
             {
                 throw new BlobNotFoundException(path, e);
             }
+        }
+
+        public Task UpdateMetadataAsync(string path, IDictionary<string, string> metadata, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
         }
 
         private async Task<BlobElement> GetPropertiesWithListingAsync(string path)
