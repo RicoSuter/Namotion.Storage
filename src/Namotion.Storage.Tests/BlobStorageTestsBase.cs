@@ -275,7 +275,34 @@ namespace Namotion.Storage.Tests
         }
 
         [Fact]
-        public virtual async Task WhenAppendingBlob_ThenItHasBeenAppended()
+        public virtual async Task WhenAppendingBlobOnly_ThenItHasBeenAppended()
+        {
+            // Arrange
+            var config = GetConfiguration();
+            using (var container = GetBlobContainer(CreateBlobStorage(config)))
+            {
+                var path = Guid.NewGuid().ToString();
+
+                try
+                {
+                    // Act
+                    await container.AppendTextAsync(path, "a");
+                    await container.AppendTextAsync(path, "b");
+
+                    var result = await container.ReadAllTextAsync(path);
+
+                    // Assert
+                    Assert.Equal("ab", result);
+                }
+                finally
+                {
+                    await container.DeleteAsync(path);
+                }
+            }
+        }
+
+        [Fact]
+        public virtual async Task WhenWritingAndAppendingBlob_ThenItHasBeenAppended()
         {
             // Arrange
             var config = GetConfiguration();

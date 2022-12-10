@@ -14,7 +14,7 @@ namespace Namotion.Storage.Tests.Blobs
         }
 
         [Fact(Skip = "Not supported yet.")]
-        public override Task WhenAppendingBlob_ThenItHasBeenAppended()
+        public override Task WhenWritingAndAppendingBlob_ThenItHasBeenAppended()
         {
             return Task.CompletedTask;
         }

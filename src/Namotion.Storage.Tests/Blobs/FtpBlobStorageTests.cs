@@ -13,8 +13,14 @@ namespace Namotion.Storage.Tests.Blobs
                 .Create("rsuter.com", 22, "test", configuration["FtpPassword"]);
         }
 
+        [Fact(Skip = "Not supported yet.")]
+        public override Task WhenAppendingBlobOnly_ThenItHasBeenAppended()
+        {
+            return Task.CompletedTask;
+        }
+
         [Fact(Skip = "Test FTP server does not support append.")]
-        public override Task WhenAppendingBlob_ThenItHasBeenAppended()
+        public override Task WhenWritingAndAppendingBlob_ThenItHasBeenAppended()
         {
             return Task.CompletedTask;
         }
