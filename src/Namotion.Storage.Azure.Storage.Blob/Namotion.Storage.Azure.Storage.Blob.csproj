@@ -12,7 +12,7 @@
     <PackageProjectUrl>https://github.com/RicoSuter/Namotion.Storage</PackageProjectUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <WarningsAsErrors>true</WarningsAsErrors>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Namotion.Storage.Abstractions\Namotion.Storage.Abstractions.csproj" />
