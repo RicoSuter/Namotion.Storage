@@ -1,6 +1,7 @@
-﻿using Microsoft.Azure.Storage;
-using Microsoft.Azure.Storage.Blob;
-using System;
+﻿using Azure;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using Azure.Storage.Blobs.Specialized;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,33 +12,33 @@ namespace Namotion.Storage.Azure.Storage.Blob
 {
     public class AzureBlobStorage : IBlobStorage
     {
-        private readonly CloudStorageAccount _storageAccount;
+        private readonly string _connectionString;
 
-        private AzureBlobStorage(CloudStorageAccount storageAccount)
+        private AzureBlobStorage(string connectionString)
         {
-            _storageAccount = storageAccount;
+            _connectionString = connectionString;
         }
 
         public static IBlobStorage CreateFromConnectionString(string connectionString)
         {
-            return new AzureBlobStorage(CloudStorageAccount.Parse(connectionString));
+            return new AzureBlobStorage(connectionString);
         }
 
         public async Task<BlobElement> GetAsync(string path, CancellationToken cancellationToken)
         {
             try
             {
-                var blob = await GetBlobReferenceAsync(path, cancellationToken).ConfigureAwait(false);
-                await blob.FetchAttributesAsync().ConfigureAwait(false);
+                var blob = await GetBlockBlobReferenceAsync(path, cancellationToken).ConfigureAwait(false);
+                var properties = await blob.GetPropertiesAsync().ConfigureAwait(false);
                 return new BlobElement(
                     path, null, BlobElementType.Blob,
-                    blob.Properties.Length,
-                    blob.Properties.Created,
-                    blob.Properties.LastModified,
-                    blob.Properties.ETag,
-                    blob.Metadata);
+                    properties.Value.ContentLength,
+                    properties.Value.CreatedOn,
+                    properties.Value.LastModified,
+                    properties.Value.ETag.ToString(),
+                    properties.Value.Metadata);
             }
-            catch (StorageException e) when (e.RequestInformation?.HttpStatusCode == 404)
+            catch (RequestFailedException e) when (e.Status == 404)
             {
                 throw new BlobNotFoundException(path, e);
             }
@@ -48,16 +49,9 @@ namespace Namotion.Storage.Azure.Storage.Blob
             try
             {
                 var blob = await GetBlobReferenceAsync(path, cancellationToken).ConfigureAwait(false);
-
-                blob.Metadata.Clear();
-                foreach (var pair in metadata)
-                {
-                    blob.Metadata[pair.Key] = pair.Value;
-                }
-
-                await blob.SetMetadataAsync(cancellationToken).ConfigureAwait(false);
+                await blob.SetMetadataAsync(metadata, cancellationToken: cancellationToken).ConfigureAwait(false);
             }
-            catch (StorageException e) when (e.RequestInformation?.HttpStatusCode == 404)
+            catch (RequestFailedException e) when (e.Status == 404)
             {
                 throw new BlobNotFoundException(path, e);
             }
@@ -68,9 +62,9 @@ namespace Namotion.Storage.Azure.Storage.Blob
             try
             {
                 var blob = await GetBlobReferenceAsync(path, cancellationToken).ConfigureAwait(false);
-                return await blob.OpenReadAsync(cancellationToken).ConfigureAwait(false);
+                return await blob.OpenReadAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
             }
-            catch (StorageException e) when (e.RequestInformation?.HttpStatusCode == 404)
+            catch (RequestFailedException e) when (e.Status == 404)
             {
                 throw new BlobNotFoundException(path, e);
             }
@@ -78,13 +72,14 @@ namespace Namotion.Storage.Azure.Storage.Blob
 
         public async Task<Stream> OpenWriteAsync(string path, CancellationToken cancellationToken = default)
         {
-            var blob = await GetBlobReferenceAsync(path, cancellationToken).ConfigureAwait(false);
-            return await blob.OpenWriteAsync(cancellationToken).ConfigureAwait(false);
+            var blob = await GetBlockBlobReferenceAsync(path, cancellationToken).ConfigureAwait(false);
+            return await blob.OpenWriteAsync(true, null, cancellationToken);
         }
 
-        public Task<Stream> OpenAppendAsync(string path, CancellationToken cancellationToken = default)
+        public async Task<Stream> OpenAppendAsync(string path, CancellationToken cancellationToken = default)
         {
-            throw new NotSupportedException();
+            var blob = await GetAppendBlobReferenceAsync(path, cancellationToken).ConfigureAwait(false);
+            return await blob.OpenWriteAsync(false, null, cancellationToken);
         }
 
         public async Task<bool> ExistsAsync(string path, CancellationToken cancellationToken = default)
@@ -98,9 +93,9 @@ namespace Namotion.Storage.Azure.Storage.Blob
             try
             {
                 var blob = await GetBlobReferenceAsync(path, cancellationToken).ConfigureAwait(false);
-                await blob.DeleteAsync(cancellationToken).ConfigureAwait(false);
+                await blob.DeleteAsync(DeleteSnapshotsOption.None, null, cancellationToken).ConfigureAwait(false);
             }
-            catch (StorageException e) when (e.RequestInformation?.HttpStatusCode == 404)
+            catch (RequestFailedException e) when (e.Status == 404)
             {
             }
         }
@@ -110,17 +105,17 @@ namespace Namotion.Storage.Azure.Storage.Blob
             var pathSegments = PathUtilities.GetSegments(path);
             if (pathSegments.Length == 0)
             {
-                var cloudBlobClient = _storageAccount.CreateCloudBlobClient();
+                var service = new BlobServiceClient(_connectionString);
 
-                BlobContinuationToken continuationToken = null;
+                var resultSegment = service
+                    .GetBlobContainersAsync(BlobContainerTraits.Metadata, cancellationToken: cancellationToken)
+                    .AsPages(default, 50);
+
                 var results = new List<BlobElement>();
-                do
+                await foreach (var containerPage in resultSegment.WithCancellation(cancellationToken))
                 {
-                    var response = await cloudBlobClient.ListContainersSegmentedAsync(continuationToken).ConfigureAwait(false);
-                    continuationToken = response.ContinuationToken;
-                    results.AddRange(response.Results.Select(c => BlobElement.CreateContainer(c.Name)));
+                    results.AddRange(containerPage.Values.Select(c => BlobElement.CreateContainer(c.Name)));
                 }
-                while (continuationToken != null);
 
                 return results.ToArray();
             }
@@ -128,33 +123,35 @@ namespace Namotion.Storage.Azure.Storage.Blob
             {
                 var containerName = pathSegments.First();
                 var containerPath = string.Join(PathUtilities.Delimiter, pathSegments.Skip(1));
-                var container = await GetCloudBlobContainerAsync(containerName, cancellationToken).ConfigureAwait(false);
 
-                BlobContinuationToken continuationToken = null;
+                var blobContainerClient = new BlobContainerClient(_connectionString, containerName);
+                var resultSegment = pathSegments.Skip(1).Any() ?
+                    blobContainerClient
+                        .GetBlobsByHierarchyAsync(delimiter: PathUtilities.Delimiter, prefix: containerPath + PathUtilities.Delimiter)
+                        .AsPages(default, 50) :
+                    blobContainerClient
+                        .GetBlobsByHierarchyAsync(delimiter: PathUtilities.Delimiter)
+                        .AsPages(default, 50);
+
                 var results = new List<BlobElement>();
-                do
+                await foreach (var blobPage in resultSegment.WithCancellation(cancellationToken))
                 {
-                    var response = pathSegments.Skip(1).Any() ?
-                        await container.ListBlobsSegmentedAsync(containerPath + PathUtilities.Delimiter, continuationToken).ConfigureAwait(false) :
-                        await container.ListBlobsSegmentedAsync(continuationToken).ConfigureAwait(false);
-
-                    continuationToken = response.ContinuationToken;
-                    results.AddRange(response.Results.Select(i =>
+                    results.AddRange(blobPage.Values.Select(i =>
                     {
-                        if (i is CloudBlobDirectory directory)
+                        if (i.IsPrefix)
                         {
-                            return BlobElement.CreateContainer(directory.Prefix, PathUtilities.GetSegments(directory.Prefix).Last());
+                            return BlobElement.CreateContainer(i.Prefix.TrimEnd('/'), PathUtilities.GetSegments(i.Prefix.TrimEnd('/')).Last());
                         }
-                        else if (i is CloudBlob blob)
+                        else if (i.IsBlob)
                         {
-                            var blobNameSegments = blob.Name.Split(PathUtilities.DelimiterChar);
+                            var blobNameSegments = i.Blob.Name.Split(PathUtilities.DelimiterChar);
                             return new BlobElement(
-                                blob.Name,
+                                i.Blob.Name,
                                 string.Join(PathUtilities.Delimiter, blobNameSegments.Skip(blobNameSegments.Length - 1)),
                                 BlobElementType.Blob,
-                                blob.Properties.Length,
-                                blob.Properties.Created,
-                                blob.Properties.LastModified);
+                                i.Blob.Properties.ContentLength,
+                                i.Blob.Properties.CreatedOn,
+                                i.Blob.Properties.LastModified);
                         }
                         else
                         {
@@ -162,7 +159,6 @@ namespace Namotion.Storage.Azure.Storage.Blob
                         }
                     }).Where(c => c != null));
                 }
-                while (continuationToken != null);
 
                 if (results.Count == 0)
                 {
@@ -177,27 +173,34 @@ namespace Namotion.Storage.Azure.Storage.Blob
         {
         }
 
-        private async Task<CloudBlockBlob> GetBlobReferenceAsync(string path, CancellationToken cancellationToken)
+        private async Task<BlobClient> GetBlobReferenceAsync(string path, CancellationToken cancellationToken)
         {
             var pathSegments = PathUtilities.GetSegments(path);
             var containerName = pathSegments.First();
             var blobName = string.Join(PathUtilities.Delimiter, pathSegments.Skip(1));
 
-            var container = await GetCloudBlobContainerAsync(containerName, cancellationToken).ConfigureAwait(false);
-            return container.GetBlockBlobReference(blobName);
+            var blobClient = new BlobClient(_connectionString, containerName, blobName);
+            return blobClient;
         }
 
-        private async Task<CloudBlobContainer> GetCloudBlobContainerAsync(string containerName, CancellationToken cancellationToken)
+        private async Task<BlockBlobClient> GetBlockBlobReferenceAsync(string path, CancellationToken cancellationToken)
         {
-            var cloudBlobClient = _storageAccount.CreateCloudBlobClient();
-            var cloudBlobContainer = cloudBlobClient.GetContainerReference(containerName);
+            var pathSegments = PathUtilities.GetSegments(path);
+            var containerName = pathSegments.First();
+            var blobName = string.Join(PathUtilities.Delimiter, pathSegments.Skip(1));
 
-            if (await cloudBlobContainer.ExistsAsync(cancellationToken).ConfigureAwait(false) == false) // TODO: Create on throw and do not always check
-            {
-                await cloudBlobContainer.CreateAsync(cancellationToken).ConfigureAwait(false);
-            }
+            var blobClient = new BlockBlobClient(_connectionString, containerName, blobName);
+            return blobClient;
+        }
 
-            return cloudBlobContainer;
+        private async Task<AppendBlobClient> GetAppendBlobReferenceAsync(string path, CancellationToken cancellationToken)
+        {
+            var pathSegments = PathUtilities.GetSegments(path);
+            var containerName = pathSegments.First();
+            var blobName = string.Join(PathUtilities.Delimiter, pathSegments.Skip(1));
+
+            var blobClient = new AppendBlobClient(_connectionString, containerName, blobName);
+            return blobClient;
         }
     }
 }

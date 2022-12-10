@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -77,6 +78,14 @@ namespace Namotion.Storage
 
         public Task<Stream> OpenAppendAsync(string path, CancellationToken cancellationToken = default)
         {
+            lock (_lock)
+            {
+                if (!_blobs.ContainsKey(path))
+                {
+                    _blobs[path] = (Array.Empty<byte>(), new Dictionary<string, string>());
+                }
+            }
+
             var stream = new InternalMemoryStream(this, path);
             stream.Write(_blobs[path].Item1, 0, _blobs[path].Item1.Length);
             return Task.FromResult<Stream>(stream);
